@@ -6,3 +6,5 @@ target
 **/index.txt*
 **/serial.txt*
 *.jks
+ssl/broker-key-creds
+ssl/broker-keystore-creds
