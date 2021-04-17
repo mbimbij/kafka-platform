@@ -5,3 +5,4 @@ target
 *.pem
 **/index.txt*
 **/serial.txt*
+*.jks

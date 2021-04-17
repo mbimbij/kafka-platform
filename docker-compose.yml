@@ -21,7 +21,8 @@ services:
       - "9092:9092"
       - "9101:9101"
     volumes:
-    - /home/joseph/workspace/cp-docker-images/examples/kafka-cluster-ssl/secrets:/etc/kafka/secrets
+#    - /home/joseph/workspace/cp-docker-images/examples/kafka-cluster-ssl/secrets:/etc/kafka/secrets
+    - /home/joseph/workspace/kafka-platform/ssl:/etc/kafka/secrets
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
