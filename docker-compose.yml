@@ -45,11 +45,12 @@ services:
       KAFKA_SSL_KEY_CREDENTIALS: broker-key-creds
       KAFKA_SSL_KEYSTORE_CREDENTIALS: broker-keystore-creds
       KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/broker.keystore.jks
-      KAFKA_SSL_KEYSTORE_PASSWORD: changeit
-      KAFKA_SSL_KEY_PASSWORD: changeit
-      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/broker.truststore.jks
-      KAFKA_SSL_TRUSTSTORE_PASSWORD: changeit
+#      KAFKA_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/broker.keystore.jks
+#      KAFKA_SSL_KEYSTORE_PASSWORD: changeit
+#      KAFKA_SSL_KEY_PASSWORD: changeit
+#      KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/broker.truststore.jks
+#      KAFKA_SSL_TRUSTSTORE_PASSWORD: changeit
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SSL
       CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
