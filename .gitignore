@@ -1,2 +1,7 @@
 target
 .idea
+*.cer
+*.csr
+*.pem
+**/index.txt*
+**/serial.txt*
