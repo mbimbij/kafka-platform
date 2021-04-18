@@ -20,7 +20,24 @@ similaire que j'ai eu l'occasion d'utiliser dans un contexte professionnel.
 
 D'autres mini-projets persos sur cette thématique à venir.
 
-## TLS - autentification du serveur uniquement
+## zookeeper cluster vs zookeeper client - mutual TLS
+
+Générer un keystore / truststore pour le cluster zookeeper avec le script `create-jks.sh`
+
+Ensuite, définir les properties suivantes dans `config/zookeeper.properties` :
+
+```properties
+secureClientPort=2182
+authProvider.x509=org.apache.zookeeper.server.auth.X509AuthenticationProvider
+serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory
+ssl.trustStore.location=/home/joseph/workspace/kafka-platform/ssl/zookeeper-server.truststore.jks
+ssl.trustStore.password=changeit
+ssl.keyStore.location=/home/joseph/workspace/kafka-platform/ssl/zookeeper-server.keystore.jks
+ssl.keyStore.password=changeit
+ssh.clientAuth=need
+```
+
+## kafka broker vs kafka client - TLS - autentification du serveur uniquement
 
 ### création de la paire de clé faisant office de ca root
 ```shell
@@ -56,7 +73,7 @@ keytool -keystore server.keystore.jks -alias caroot -import -file cacert.pem -st
 keytool -keystore server.keystore.jks -alias localhost -import -file server.key.signed.cer -storepass changeit
 ```
 
-## multual - TLS
+## kafka broker vs kafka client - multual TLS
 
 ### Création d'un truststore / keystore pour le client
 Utilisation du script `create-jks.sh $CLIENT_NAME_AND_HOSTNAME`
