@@ -56,6 +56,33 @@ keytool -keystore server.keystore.jks -alias caroot -import -file cacert.pem -st
 keytool -keystore server.keystore.jks -alias localhost -import -file server.key.signed.cer -storepass changeit
 ```
 
+## multual - TLS
+
+### Création d'un truststore / keystore pour le client
+Utilisation du script `create-jks.sh $CLIENT_NAME_AND_HOSTNAME`
+En argument de ce script, le nom du client, qui sera utilisé: 
+
+- dans le nom des fichiers
+- comme alias dans le keystore
+- comme extension "SAN", soit un hostname supplémentaire, pour la vérification du hostname (qu'il est déconseillé de désactiver)
+
+Rajouter les props suivantes au niveau du broker, dans `server.properties`
+
+```properties
+ssl.truststore.location=$PATH_TO_TRUSTSTORE
+ssl.truststore.password=$TRUSTSTORE_PASSWORD
+ssl.client.auth=required
+```
+
+## SASL/SCRAM - autentification des clients par username / password
+
+### Création du username / password dans Zookeeper
+
+Création du user `broker-admin` avec le mot de passe `pass`:
+
+```shell
+$KAFKA_HOME/bin/kafka-configs.sh --zookeeper localhost:2181 --entity-type users --entity-name broker-admin --alter --add-config 'SCRAM-SHA-512=[password=pass]'
+```
 
 # :gb: Project Description
 
