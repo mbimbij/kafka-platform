@@ -78,10 +78,28 @@ ssl.client.auth=required
 
 ### Création du username / password dans Zookeeper
 
-Création du user `broker-admin` avec le mot de passe `pass`:
+Kafka Broker - Création du user `broker-admin` avec le mot de passe `pass`:
 
 ```shell
 $KAFKA_HOME/bin/kafka-configs.sh --zookeeper localhost:2181 --entity-type users --entity-name broker-admin --alter --add-config 'SCRAM-SHA-512=[password=pass]'
+```
+
+Kafka Producer - Création du user `sasl-producer` avec le mot de passe `producer-pass`:
+
+```shell
+./bin/kafka-configs.sh --zookeeper localhost:2181 --entity-type users --entity-name sasl-producer --alter --add-config 'SCRAM-SHA-512=[password="producer-pass"]'
+```
+
+Kafka Consumer - Création du user `sasl-consumer` avec le mot de passe `consumer-pass`:
+
+```shell
+./bin/kafka-configs.sh --zookeeper localhost:2181 --entity-type users --entity-name sasl-consumer --alter --add-config 'SCRAM-SHA-512=[password="consumer-pass"]'
+```
+
+Lister les utilisateurs
+
+```shell
+./bin/kafka-configs.sh --zookeeper localhost:2181 --entity-type users --describe
 ```
 
 # :gb: Project Description
