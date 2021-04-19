@@ -10,6 +10,4 @@ TRUSTSTORE_NAME=$1.truststore.jks
 
 rm $TRUSTSTORE_NAME
 rm $KEYSTORE_NAME
-rm index.txt*
-rm serial.txt*
 ls *.pem | grep -Ev '(cacert|cakey)' | xargs rm

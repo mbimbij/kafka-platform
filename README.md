@@ -37,6 +37,31 @@ ssl.keyStore.password=changeit
 ssh.clientAuth=need
 ```
 
+Dans les configs du client shell, rajouter les props suivantes: 
+
+```properties
+zookeeper.clientCnxnSocket=org.apache.zookeeper.ClientCnxnSocketNetty
+zookeeper.ssl.client.enable=true
+zookeeper.ssl.protocol=TLSv1.3
+zookeeper.ssl.truststore.location=/home/joseph/workspace/kafka-platform/ssl/zookeeper-client.truststore.jks
+zookeeper.ssl.truststore.password=changeit
+zookeeper.ssl.keystore.location=/home/joseph/workspace/kafka-platform/ssl/zookeeper-client.keystore.jks
+zookeeper.ssl.keystore.password=changeit
+```
+
+Dans la config du broker Kafka, rajouter la config:
+
+```properties
+zookeeper.connect=localhost:2182
+zookeeper.ssl.client.enable=true
+zookeeper.clientCnxnSocket=org.apache.zookeeper.ClientCnxnSocketNetty
+zookeeper.ssl.keystore.location=/home/joseph/workspace/kafka-platform/ssl/broker.keystore.jks
+zookeeper.ssl.keystore.password=changeit
+zookeeper.ssl.truststore.location=/home/joseph/workspace/kafka-platform/ssl/broker.truststore.jks
+zookeeper.ssl.truststore.password=changeit
+zookeeper.set.acl=true
+```
+
 ## kafka broker vs kafka client - TLS - autentification du serveur uniquement
 
 ### création de la paire de clé faisant office de ca root

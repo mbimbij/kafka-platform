@@ -1,7 +1,11 @@
 #!/bin/bash
 
-if [[ $# != 1 ]]; then
-  echo -e "usage:\n./create-keystore.sh \$ENTITY_NAME"
+if [[ $# == 1 ]]; then
+  COMMON_NAME=$1
+elif [[ $# == 2 ]]; then
+  COMMON_NAME=$2
+else
+  echo -e "usage:\n./create-keystore.sh \$ENTITY_NAME [\$COMMON_NAME]"
   exit 1
 fi
 
@@ -15,11 +19,11 @@ TRUSTSTORE_NAME=$ENTITY_NAME.truststore.jks
 echo "##################################################################################################"
 echo "# création du keystore du client"
 echo "##################################################################################################"
-keytool -keystore $ENTITY_NAME.keystore.jks \
+keytool -keystore $KEYSTORE_NAME \
   -alias $ENTITY_NAME \
   -validity 365 \
   -genkey -keyalg RSA -storetype pkcs12 -storepass $PASSWORD \
-  -dname "CN=$ENTITY_NAME, OU=TEST, O=SOME_ORG, L=SOME_PLACE, S=SOME_STATE, C=FR"
+  -dname "CN=$COMMON_NAME, OU=TEST, O=SOME_ORG, L=SOME_PLACE, S=SOME_STATE, C=FR"
 
 echo "##################################################################################################"
 echo "# création d'un csr pour le client"
