@@ -9,3 +9,5 @@ target
 ssl/broker-key-creds
 ssl/broker-keystore-creds
 broker-truststore-creds
+alice_credentials.csv
+bob_credentials.csv
