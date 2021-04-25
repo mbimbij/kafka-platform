@@ -1,4 +1,4 @@
-package com.example.core;
+package com.example.authorization.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

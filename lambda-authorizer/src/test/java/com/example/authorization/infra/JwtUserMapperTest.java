@@ -1,8 +1,7 @@
-package com.example.leftside;
+package com.example.authorization.infra;
 
-import com.example.core.Group;
-import com.example.core.User;
-import org.assertj.core.api.Assertions;
+import com.example.authorization.core.Group;
+import com.example.authorization.core.User;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

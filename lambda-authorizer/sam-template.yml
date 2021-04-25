@@ -10,10 +10,6 @@ Parameters:
     Default: '0.0.1-SNAPSHOT'
     Type: String
     Description: Application Version
-  ApplicationHandlerFqdn:
-    Default: 'com.example.leftside.Handler'
-    Type: String
-    Description: Application Handler Fqdn
 
 Resources:
   MainFunction:
@@ -21,7 +17,7 @@ Resources:
     Properties:
 #      CodeUri: !Sub 'target/${ApplicationName}-${ApplicationVersion}.jar'
       CodeUri: 'target/lambda-authorizer-0.0.1-SNAPSHOT.jar'
-      Handler: !Ref ApplicationHandlerFqdn
+      Handler: 'com.example.authorization.infra.Handler'
       Runtime: java11
       Description: Java function
       FunctionName: !Ref ApplicationName

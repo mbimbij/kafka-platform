@@ -1,4 +1,4 @@
-package com.example.leftside;
+package com.example.authorization.infra;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;

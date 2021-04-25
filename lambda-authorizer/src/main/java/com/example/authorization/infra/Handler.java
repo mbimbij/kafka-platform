@@ -1,11 +1,11 @@
-package com.example.leftside;
+package com.example.authorization.infra;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.example.core.AuthorizationDecider;
-import com.example.core.Group;
-import com.example.core.Topic;
-import com.example.core.User;
+import com.example.authorization.core.AuthorizationDecider;
+import com.example.authorization.core.Group;
+import com.example.authorization.core.Topic;
+import com.example.authorization.core.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +34,7 @@ public class Handler implements RequestHandler<Map<String, Object>, Map<String, 
 
     String topicName = requestJsonNode.at("/pathParameters/topic").asText();
     log.info("topicName: {}", topicName);
-    Topic topic = getMockGroup(topicName);
+    Topic topic = getMockTopic(topicName);
     User user = jwtUserMapper.getUserFromJwt(authorizationToken);
     log.info("group1: {}", new Group("group1"));
     log.info("topic: {}", topic);
@@ -48,7 +48,7 @@ public class Handler implements RequestHandler<Map<String, Object>, Map<String, 
     });
   }
 
-  private Topic getMockGroup(String topicName) {
+  private Topic getMockTopic(String topicName) {
     String groupName;
 
     if (Objects.equals(topicName, "topic1")) {

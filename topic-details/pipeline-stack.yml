@@ -283,6 +283,6 @@ Resources:
                   - CloudFormationRole
                   - Arn
                 Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND,CAPABILITY_IAM
-                TemplatePath: !Sub 'BuildOutput::lambda-authorizer/out-sam-template.yml'
+                TemplatePath: !Sub 'BuildOutput::${ApplicationName}/out-sam-template.yml'
                 ParameterOverrides: !Sub '{"ApplicationName":"${ApplicationName}"}'
                 StackName: !Ref SamStackName

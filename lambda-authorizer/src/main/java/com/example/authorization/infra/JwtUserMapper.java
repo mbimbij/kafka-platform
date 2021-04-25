@@ -1,9 +1,9 @@
-package com.example.leftside;
+package com.example.authorization.infra;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.core.Group;
-import com.example.core.User;
+import com.example.authorization.core.Group;
+import com.example.authorization.core.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
