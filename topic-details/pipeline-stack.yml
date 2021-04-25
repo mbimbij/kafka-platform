@@ -1,0 +1,288 @@
+Parameters:
+  ApplicationName:
+    Type: String
+    Description: Application Name
+  GithubRepo:
+    Type: String
+    Description: Github source code repository
+  GithubRepoBranch:
+    Default: 'main'
+    Type: String
+    Description: Github source code branch
+  SamStackName:
+    Type: String
+    Description: Name of the SAM stack
+
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Description: S3 bucket for pipeline artifacts
+    Properties:
+      BucketName: !Join
+        - '-'
+        - - !Ref 'AWS::Region'
+          - !Ref 'AWS::AccountId'
+          - !Ref ApplicationName
+          - pipeline-bucket
+  GithubConnection:
+    Type: AWS::CodeStarConnections::Connection
+    Properties:
+      ConnectionName: !Ref ApplicationName
+      ProviderType: GitHub
+  BuildProjectRole:
+    Type: 'AWS::IAM::Role'
+    Description: IAM role for !Ref ApplicationName build resource
+    Properties:
+      RoleName: !Join
+        - '-'
+        - - !Ref ApplicationName
+          - build-role
+      Path: /
+      Policies:
+        - PolicyName: !Join
+            - '-'
+            - - !Ref ApplicationName
+              - build-policy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:GetBucketAcl
+                  - s3:GetBucketLocation
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}'
+                  - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}/*'
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*'
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: "sts:AssumeRole"
+            Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+  CloudFormationRole:
+    Type: 'AWS::IAM::Role'
+    Description: IAM role for cloudformation deploy resource
+    Properties:
+      RoleName: !Join
+        - '-'
+        - - !Ref ApplicationName
+          - cloudformation-role
+      Path: /
+      Policies:
+        - PolicyName: !Join
+            - '-'
+            - - !Ref ApplicationName
+              - build-policy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:*
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}'
+                  - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}/*'
+              - Effect: Allow
+                Action:
+                  - codedeploy:*
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:codedeploy:${AWS::Region}:${AWS::AccountId}:application:${SamStackName}*'
+                  - !Sub 'arn:${AWS::Partition}:codedeploy:${AWS::Region}:${AWS::AccountId}:deploymentgroup:${SamStackName}*'
+              - Effect: Allow
+                Action:
+                  - cloudformation:*
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:codedeploy:${AWS::Region}:${AWS::AccountId}:deploymentgroup:${SamStackName}*'
+                  - !Sub 'arn:${AWS::Partition}:cloudformation:${AWS::Region}:aws:transform/Serverless-2016-10-31'
+              - Effect: Allow
+                Action:
+                  - iam:*
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${SamStackName}*'
+                  - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ApplicationName}*'
+              - Effect: Allow
+                Action:
+                  - lambda:*
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:*'
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - cloudformation.amazonaws.com
+#      ManagedPolicyArns:
+#        - arn:aws:iam::aws:policy/AWSCloudFormationFullAccess
+#        - arn:aws:iam::aws:policy/IAMFullAccess
+#        - arn:aws:iam::aws:policy/AWSLambda_FullAccess
+  PipelineRole:
+    Type: 'AWS::IAM::Role'
+    Description: IAM role for !Ref ApplicationName pipeline resource
+    Properties:
+      RoleName: !Join
+        - '-'
+        - - !Ref ApplicationName
+          - pipeline-role
+      Path: /
+      Policies:
+        - PolicyName: !Join
+            - '-'
+            - - !Ref ApplicationName
+              - pipeline-policy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codestar-connections:UseConnection
+                Resource: !Ref GithubConnection
+              - Effect: Allow
+                Action:
+                  - codebuild:BatchGetBuilds
+                  - codebuild:StartBuild
+                  - codebuild:BatchGetBuildBatches
+                  - codebuild:StartBuildBatch
+                Resource: !GetAtt
+                  - BuildProject
+                  - Arn
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:GetBucketAcl
+                  - s3:PutObjectAcl
+                  - s3:GetBucketLocation
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}'
+                  - !Sub 'arn:${AWS::Partition}:s3:::${S3Bucket}/*'
+              - Effect: Allow
+                Action:
+                  - cloudformation:*
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${SamStackName}/*'
+              - Action:
+                - 'iam:PassRole'
+                Resource:
+                  - !GetAtt
+                    - CloudFormationRole
+                    - Arn
+                Effect: Allow
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: "sts:AssumeRole"
+            Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+  BuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Join
+        - '-'
+        - - !Ref ApplicationName
+          - build-project
+      Description: A build project for !Ref ApplicationName
+      ServiceRole: !Ref BuildProjectRole
+      Artifacts:
+        Type: CODEPIPELINE
+        Packaging: ZIP
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        EnvironmentVariables:
+          - Name: S3_BUCKET
+            Type: PLAINTEXT
+            Value: !Ref S3Bucket
+          - Name: APPLICATION_NAME
+            Type: PLAINTEXT
+            Value: !Ref ApplicationName
+      Cache:
+        Type: S3
+        Location: !Sub '${S3Bucket}/maven-cache'
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: |
+          version: 0.2
+          phases:
+            build:
+              commands:
+                - cd $APPLICATION_NAME
+                - mvn clean package
+                - sam package --template-file sam-template.yml --s3-bucket $S3_BUCKET --output-template-file out-sam-template.yml
+          artifacts:
+            files:
+              - $APPLICATION_NAME/out-sam-template.yml
+          cache:
+            paths:
+              - '/root/.m2/**/*'
+  Pipeline:
+    Description: Creating a deployment pipeline for !Ref ApplicationName project in AWS CodePipeline
+    Type: 'AWS::CodePipeline::Pipeline'
+    Properties:
+      RoleArn: !GetAtt
+        - PipelineRole
+        - Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref S3Bucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: Source
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: 1
+                Provider: CodeStarSourceConnection
+              OutputArtifacts:
+                - Name: SourceOutput
+              Configuration:
+                ConnectionArn: !Ref GithubConnection
+                FullRepositoryId: !Ref GithubRepo
+                BranchName: !Ref GithubRepoBranch
+                OutputArtifactFormat: "CODE_ZIP"
+        - Name: Build
+          Actions:
+            - Name: Build
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildOutput
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName:
+                  Ref: BuildProject
+        - Name: Deploy
+          Actions:
+            - Name: Deploy
+              RunOrder: 1
+              InputArtifacts:
+                - Name: BuildOutput
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                RoleArn: !GetAtt
+                  - CloudFormationRole
+                  - Arn
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND,CAPABILITY_IAM
+                TemplatePath: !Sub 'BuildOutput::lambda-authorizer/out-sam-template.yml'
+                ParameterOverrides: !Sub '{"ApplicationName":"${ApplicationName}"}'
+                StackName: !Ref SamStackName
