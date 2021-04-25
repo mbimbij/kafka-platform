@@ -29,6 +29,8 @@
         <mockito.version>3.6.28</mockito.version>
         <aws.sdk.version>2.16.46</aws.sdk.version>
         <java-jwt.version>3.15.0</java-jwt.version>
+        <jackson.version>2.12.3</jackson.version>
+        <maven-model.version>3.8.1</maven-model.version>
     </properties>
 
     <dependencyManagement>
@@ -123,10 +125,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>dynamodb</artifactId>
-            <version>${aws.sdk.version}</version>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${jackson.version}</version>
+            <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>${maven-model.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
