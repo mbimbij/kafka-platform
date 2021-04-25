@@ -29,5 +29,11 @@ Resources:
         - AWSLambda_ReadOnlyAccess
         - AWSXrayWriteOnlyAccess
         - AWSLambdaVPCAccessExecutionRole
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "lambda:InvokeFunction"
+              Resource: 'arn:aws:lambda:eu-west-3:274314838444:function:topic-details'
       Tracing: Active
       AutoPublishAlias: live

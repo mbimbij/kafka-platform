@@ -1,11 +1,9 @@
-package com.example.authorization.core;
+package com.example.topics.details.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class Group {
   String name;

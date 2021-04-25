@@ -146,6 +146,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <excludedGroups>manual</excludedGroups>
                 </configuration>
             </plugin>
         </plugins>

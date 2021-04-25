@@ -20,8 +20,9 @@ import java.util.Objects;
 public class Handler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
 
   private ObjectMapper mapper = new ObjectMapper();
-  private AuthorizationDecider authorizationDecider = new AuthorizationDecider();
   private JwtUserMapper jwtUserMapper = new JwtUserMapper();
+  private AuthorizationDecider authorizationDecider = new AuthorizationDecider();
+  private TopicDetailsGateway topicDetailsGateway = new TopicDetailsGateway();
 
   @SneakyThrows
   @Override
@@ -34,7 +35,7 @@ public class Handler implements RequestHandler<Map<String, Object>, Map<String, 
 
     String topicName = requestJsonNode.at("/pathParameters/topic").asText();
     log.info("topicName: {}", topicName);
-    Topic topic = getMockTopic(topicName);
+    Topic topic = topicDetailsGateway.getTopicDetails(topicName);
     User user = jwtUserMapper.getUserFromJwt(authorizationToken);
     log.info("group1: {}", new Group("group1"));
     log.info("topic: {}", topic);
