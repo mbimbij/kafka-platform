@@ -16,7 +16,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
 #      CodeUri: !Sub 'target/${ApplicationName}-${ApplicationVersion}.jar'
-      CodeUri: 'target/topic-details-0.0.1-SNAPSHOT.jar'
+      CodeUri: 'target/topic-actions-0.0.1-SNAPSHOT.jar'
       Handler: 'com.example.topics.details.leftside.Handler'
       Runtime: java11
       Description: Java function
