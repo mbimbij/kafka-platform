@@ -23,7 +23,7 @@ services:
       - "9101:9101"
     volumes:
 #    - /home/joseph/workspace/cp-docker-images/examples/kafka-cluster-ssl/secrets:/etc/kafka/secrets
-    - /home/joseph/workspace/kafka-platform/ssl:/etc/kafka/secrets
+    - ./ssl:/etc/kafka/secrets
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
@@ -47,8 +47,9 @@ services:
       KAFKA_SSL_TRUSTSTORE_FILENAME: broker.truststore.jks
       KAFKA_SSL_TRUSTSTORE_CREDENTIALS: broker-truststore-creds
       KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SSL
-      KAFKA_SSL_CLIENT_AUTH: 'required'
+      KAFKA_SECURITY_INTER_BROKER_PROTOCOL: PLAINTEXT
+      KAFKA_SSL_CLIENT_AUTH: 'none'
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'

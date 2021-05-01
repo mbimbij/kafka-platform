@@ -1,0 +1,127 @@
+Parameters:
+  KakfaClusterName:
+    Type: String
+    Description: Kakfa Cluster Name
+  KubernetesStackName:
+    Type: String
+    Description: Kakfa Cluster Stack Name
+  NetworkingStackName:
+    Type: String
+    Description: Networking Stack Name
+  VolumeSize:
+    Type: Number
+    Description: Kafka Nodes EBS Volume Size
+  KMSKafkaArn:
+    Type: String
+    Description: KMS Kafka Arn
+  NumberOfBrokerNodes:
+    Type: Number
+    Description: Number Of Broker Nodes
+  BastionHostKeyName:
+    Type: String
+    Description: Bastion Host Key Name
+
+Resources:
+  KakfaCluster:
+    Type: 'AWS::MSK::Cluster'
+    Properties:
+      ClusterName: !Ref KakfaClusterName
+      KafkaVersion: 2.7.0
+      NumberOfBrokerNodes: !Ref NumberOfBrokerNodes
+      EnhancedMonitoring: PER_BROKER
+      EncryptionInfo:
+        EncryptionAtRest:
+          DataVolumeKMSKeyId: !Ref KMSKafkaArn
+        EncryptionInTransit:
+          ClientBroker: TLS_PLAINTEXT
+          InCluster: true
+#      OpenMonitoring:
+#        Prometheus:
+#          JmxExporter:
+#            EnabledInBroker: "true"
+#          NodeExporter:
+#            EnabledInBroker: "true"
+#      ConfigurationInfo:
+#        Arn: ReplaceWithConfigurationArn
+#        Revision: 1
+#      ClientAuthentication:
+#        Tls:
+#          CertificateAuthorityArnList:
+#            - ReplaceWithCAArn
+      Tags:
+        Environment: Test
+        Owner: QATeam
+      BrokerNodeGroupInfo:
+        BrokerAZDistribution: DEFAULT
+        InstanceType: kafka.t3.small
+        SecurityGroups:
+          - !Ref KafkaClusterSecurityGroup
+        StorageInfo:
+          EBSStorageInfo:
+            VolumeSize: !Ref VolumeSize
+        ClientSubnets:
+          Fn::Split:
+            - ','
+            - Fn::ImportValue: !Sub '${NetworkingStackName}::SubnetsPrivate'
+  KafkaClusterSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Kafka Cluster Security Group
+      VpcId:
+        Fn::ImportValue: !Sub '${NetworkingStackName}::VPC'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          SourceSecurityGroupId: !Ref BastionHostSecurityGroup
+  KafkaClusterSecurityGroupIngressSelfIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    DependsOn: KafkaClusterSecurityGroup
+    Properties:
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      GroupId: !Ref KafkaClusterSecurityGroup
+      SourceSecurityGroupId: !Ref KafkaClusterSecurityGroup
+  BastionHostSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Bastion Host security group
+      VpcId:
+        Fn::ImportValue: !Sub '${NetworkingStackName}::VPC'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+  BastionHost:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0d3f551818b21ed81
+      InstanceType: t2.micro
+      SubnetId: !Select [ "1", !Split [',', Fn::ImportValue: !Sub '${NetworkingStackName}::SubnetsPublic'] ]
+      KeyName: !Ref BastionHostKeyName
+      SecurityGroupIds:
+        - !GetAtt
+          - BastionHostSecurityGroup
+          - GroupId
+      UserData:
+        Fn::Base64: |
+          #! /bin/bash
+          sudo apt update
+          sudo apt install -y openjdk-14-jdk
+          cd /home/ubuntu
+          wget https://apache.mediamirrors.org/kafka/2.7.0/kafka_2.13-2.7.0.tgz
+          tar -xvzf kafka_2.13-2.7.0.tgz
+          chown -R ubuntu:ubuntu .
+Outputs:
+  BastionHostSecurityGroupId:
+    Value: !GetAtt
+      - BastionHostSecurityGroup
+      - GroupId
+  BastionHostPublicDnsName:
+    Value: !GetAtt
+      - BastionHost
+      - PublicDnsName
+  KakfaClusterArn:
+    Value: !Ref KakfaCluster

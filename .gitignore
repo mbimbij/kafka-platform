@@ -13,3 +13,4 @@ alice_credentials.csv
 bob_credentials.csv
 **/*.iml
 target
+.aws-sam
