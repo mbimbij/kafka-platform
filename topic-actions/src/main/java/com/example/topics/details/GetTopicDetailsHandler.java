@@ -1,9 +1,9 @@
-package com.example.topics.details.leftside;
+package com.example.topics.details;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.example.topics.details.core.Group;
-import com.example.topics.details.core.Topic;
+import com.example.topics.core.Group;
+import com.example.topics.core.Topic;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
-public class Handler implements RequestHandler<Map<String, Object>, Topic> {
+public class GetTopicDetailsHandler implements RequestHandler<Map<String, Object>, Topic> {
 
   @SneakyThrows
   @Override

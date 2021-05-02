@@ -12,12 +12,12 @@ Parameters:
     Description: Application Version
 
 Resources:
-  MainFunction:
+  GetTopicDetailsHandler:
     Type: AWS::Serverless::Function
     Properties:
 #      CodeUri: !Sub 'target/${ApplicationName}-${ApplicationVersion}.jar'
-      CodeUri: 'target/topic-actions-0.0.1-SNAPSHOT.jar'
-      Handler: 'com.example.topics.details.leftside.Handler'
+      CodeUri: 'target/topic-details-0.0.1-SNAPSHOT.jar'
+      Handler: 'com.example.topics.details.GetTopicDetailsHandler'
       Runtime: java11
       Description: Java function
       FunctionName: !Ref ApplicationName

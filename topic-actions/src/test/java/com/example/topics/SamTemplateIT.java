@@ -1,6 +1,6 @@
-package com.example.topics.details;
+package com.example.topics;
 
-import com.example.topics.details.leftside.Handler;
+import com.example.topics.details.GetTopicDetailsHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -38,7 +38,7 @@ public class SamTemplateIT {
     String expectedCodeUri = "target/" + artifactId + "-" + version + ".jar";
 
     // THEN
-    String actualCodeUri = jsonNode.at("/Resources/MainFunction/Properties/CodeUri").asText();
+    String actualCodeUri = jsonNode.at("/Resources/GetTopicDetailsHandler/Properties/CodeUri").asText();
     assertThat(actualCodeUri).isEqualTo(expectedCodeUri);
   }
 
@@ -46,8 +46,8 @@ public class SamTemplateIT {
   @Test
   void verifyHandler() {
     // GIVEN
-    String expectedSamHandlerName = Handler.class.getName();
-    String actualSamHandlerName = jsonNode.at("/Resources/MainFunction/Properties/Handler").asText();
+    String expectedSamHandlerName = GetTopicDetailsHandler.class.getName();
+    String actualSamHandlerName = jsonNode.at("/Resources/GetTopicDetailsHandler/Properties/Handler").asText();
 
     // THEN
     assertThat(actualSamHandlerName).isEqualTo(expectedSamHandlerName);

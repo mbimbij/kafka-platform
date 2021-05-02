@@ -1,4 +1,4 @@
-package com.example.topics.details.core;
+package com.example.topics.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

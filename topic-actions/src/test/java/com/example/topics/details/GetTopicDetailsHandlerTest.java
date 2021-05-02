@@ -1,26 +1,24 @@
-package com.example.topics.details.leftside;
+package com.example.topics.details;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.example.topics.details.core.Group;
-import com.example.topics.details.core.Topic;
-import org.assertj.core.api.Assertions;
+import com.example.topics.core.Group;
+import com.example.topics.core.Topic;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-class HandlerTest {
+class GetTopicDetailsHandlerTest {
   @Test
-  void name() {
+  void testMockVersion() {
     // GIVEN
-    Handler handler = new Handler();
+    GetTopicDetailsHandler getTopicDetailsHandler = new GetTopicDetailsHandler();
     Topic expectedTopic = new Topic("topic1", new Group("group1"));
 
     // WHEN
-    Topic actualTopic = handler.handleRequest(Map.of("topicName", "topic1"), mock(Context.class));
+    Topic actualTopic = getTopicDetailsHandler.handleRequest(Map.of("topicName", "topic1"), mock(Context.class));
 
     // THEN
     assertThat(actualTopic).isEqualTo(expectedTopic);
