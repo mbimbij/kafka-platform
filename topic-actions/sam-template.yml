@@ -12,6 +12,20 @@ Parameters:
     Description: Application Version
 
 Resources:
+
+  DynamoDbTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: topic-info
+      PrimaryKey:
+        Name: topicName
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+      SSESpecification:
+        SSEEnabled: true
+
   GetTopicDetailsHandler:
     Type: AWS::Serverless::Function
     Properties:
