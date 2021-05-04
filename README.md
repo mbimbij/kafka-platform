@@ -1,6 +1,6 @@
 # kafka platform
 
-# Polyglot Microservices, #1
+# kafka platform
 
 :fr: Sommaire / :gb: Table of Contents
 =================

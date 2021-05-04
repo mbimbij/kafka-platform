@@ -113,6 +113,11 @@ Resources:
                   - lambda:*
                 Resource:
                   - !Sub 'arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:*'
+              - Effect: Allow
+                Action:
+                  - dynamodb:*
+                Resource:
+                  - '*'
       AssumeRolePolicyDocument:
         Statement:
           - Action: 'sts:AssumeRole'
