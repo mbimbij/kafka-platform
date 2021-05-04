@@ -37,7 +37,6 @@ public class Handler implements RequestHandler<Map<String, Object>, Map<String, 
     log.info("topicName: {}", topicName);
     Topic topic = topicDetailsGateway.getTopicDetails(topicName);
     User user = jwtUserMapper.getUserFromJwt(authorizationToken);
-    log.info("group1: {}", new Group("group1"));
     log.info("topic: {}", topic);
     log.info("user: {}", user);
 
@@ -47,22 +46,6 @@ public class Handler implements RequestHandler<Map<String, Object>, Map<String, 
     String response = "{\"principalId\":\"abc123\",\"policyDocument\":{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":\"execute-api:Invoke\",\"Resource\":[\"arn:aws:execute-api:eu-west-3:274314838444:orhscngdud/*/*\"],\"Effect\":\"" + authorizationResponse + "\"}]}}";
     return mapper.readValue(response, new TypeReference<HashMap<String, Object>>() {
     });
-  }
-
-  private Topic getMockTopic(String topicName) {
-    String groupName;
-
-    if (Objects.equals(topicName, "topic1")) {
-      groupName = "group1";
-    } else if (Objects.equals(topicName, "topic2")) {
-      groupName = "group2";
-    } else {
-      groupName = "unknown";
-    }
-
-    return Topic.builder()
-        .ownerGroup(new Group(groupName))
-        .build();
   }
 
   private String getAuthorizationToken(JsonNode request) {
