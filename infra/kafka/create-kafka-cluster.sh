@@ -10,7 +10,6 @@ numberOfBrokerNodes=$(echo $privateSubnetIds | tr ',' '\n' | wc -l)
 volumeSize=8
 kafkaKmsId=$(aws kms list-aliases --query "Aliases[?AliasName=='alias/aws/kafka'].TargetKeyId" --output text)
 kafkaKmsArn=$(aws kms describe-key --key-id $kafkaKmsId --query "KeyMetadata.Arn" --output text)
-ADD_EKS_SECURITY_GROUP=$1
 
 echo "privateSubnetIds: $privateSubnetIds"
 echo "numberOfBrokerNodes: $numberOfBrokerNodes"
