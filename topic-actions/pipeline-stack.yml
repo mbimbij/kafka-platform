@@ -2,6 +2,9 @@ Parameters:
   ApplicationName:
     Type: String
     Description: Application Name
+  ApplicationDirectoryName:
+    Type: String
+    Description: Application Directory Name
   GithubRepo:
     Type: String
     Description: Github source code repository
@@ -208,9 +211,9 @@ Resources:
           - Name: S3_BUCKET
             Type: PLAINTEXT
             Value: !Ref S3Bucket
-          - Name: APPLICATION_NAME
+          - Name: APPLICATION_DIRECTORY_NAME
             Type: PLAINTEXT
-            Value: !Ref ApplicationName
+            Value: !Ref ApplicationDirectoryName
       Cache:
         Type: S3
         Location: !Sub '${S3Bucket}/maven-cache'
@@ -221,12 +224,12 @@ Resources:
           phases:
             build:
               commands:
-                - cd $APPLICATION_NAME
+                - cd $APPLICATION_DIRECTORY_NAME
                 - mvn clean package
                 - sam package --template-file sam-template.yml --s3-bucket $S3_BUCKET --output-template-file out-sam-template.yml
           artifacts:
             files:
-              - $APPLICATION_NAME/out-sam-template.yml
+              - $APPLICATION_DIRECTORY_NAME/out-sam-template.yml
           cache:
             paths:
               - '/root/.m2/**/*'
