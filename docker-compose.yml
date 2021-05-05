@@ -1,10 +1,10 @@
 ---
-version: '2'
+version: '3.3'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:6.1.1
     hostname: zookeeper
-    container_name: zookeeper
+#    container_name: zookeeper
     ports:
       - "2181:2181"
     environment:
@@ -14,7 +14,7 @@ services:
   broker:
     image: confluentinc/cp-server:6.1.1
     hostname: broker
-    container_name: broker
+#    container_name: broker
     depends_on:
       - zookeeper
     ports:
@@ -54,6 +54,13 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+
+  dynamodb:
+    image: amazon/dynamodb-local:latest
+    expose:
+      - 8000
+#    ports:
+#      - "8000:8000"
 
 #  schema-registry:
 #    image: confluentinc/cp-schema-registry:6.1.1

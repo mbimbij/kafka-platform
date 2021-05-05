@@ -1,4 +1,4 @@
-package com.example.topics.dao;
+package com.example.topics.infra.dao;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

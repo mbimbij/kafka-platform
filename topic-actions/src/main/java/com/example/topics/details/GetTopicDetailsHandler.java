@@ -2,8 +2,8 @@ package com.example.topics.details;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.example.topics.core.Group;
-import com.example.topics.core.Topic;
+import com.example.topics.sharedcore.Group;
+import com.example.topics.sharedcore.Topic;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 

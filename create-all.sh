@@ -11,7 +11,7 @@ export KAFKA_CLUSTER_NAME=$APPLICATION_NAME-kafka-cluster
 export KAFKA_STACK_NAME=$APPLICATION_NAME-kafka
 source infra/infra.env
 
-echo "##############################################################################"
+echo-e  "\n##############################################################################"
 echo "creating networking: VPC, etc."
 echo -e "##############################################################################\n"
 # create vpc and networking
@@ -20,8 +20,8 @@ aws cloudformation deploy \
   --template-file infra/networking/networking-cfn-template.yml \
   --capabilities CAPABILITY_NAMED_IAM
 
-echo "##############################################################################"
-echo "creating cicd pipeline for topic CRUD action platform"
+echo-e  "\n##############################################################################"
+echo "creating cicd pipeline for topic CRUD actions platform"
 echo -e "##############################################################################\n"
 # create cicd pipeline for topics crud actions
 aws cloudformation deploy    \
@@ -34,7 +34,7 @@ aws cloudformation deploy    \
     GithubRepo=$GITHUB_REPO     \
     SamStackName=$APPLICATION_NAME-topic-actions-sam-stack
 
-echo "##############################################################################"
+echo-e  "\n##############################################################################"
 echo "creating cicd pipeline for lambda authorizer platform"
 echo -e "##############################################################################\n"
 # create cicd pipeline for topics crud actions
@@ -48,13 +48,13 @@ aws cloudformation deploy    \
     GithubRepo=$GITHUB_REPO     \
     SamStackName=$APPLICATION_NAME-lambda-authorizer-sam-stack
 
-echo "##############################################################################"
+echo-e  "\n##############################################################################"
 echo "creating kafka cluster"
 echo -e "##############################################################################\n"
 # create kafka cluster
 infra/kafka/create-kafka-cluster.sh
 
-echo "##############################################################################"
+echo-e  "\n##############################################################################"
 echo "kafka cluster, kafka topic CRUD actions platform pipeline, lambda authorizer pipeline creation done"
 echo -e "##############################################################################\n"
 

@@ -1,20 +1,23 @@
-package com.example.topics.dao;
+package com.example.topics.infra.dao;
 
-import com.example.topics.core.Group;
-import com.example.topics.core.Topic;
-import com.example.topics.core.TopicDao;
+import com.example.topics.sharedcore.Group;
+import com.example.topics.sharedcore.Topic;
+import com.example.topics.sharedcore.TopicDao;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
 import java.util.Optional;
 
 public class TopicDaoDynamoDbImpl implements TopicDao {
-  private DynamoDbEnhancedClient enhancedClient = DynamoDbEnhancedClient.create();
   public static final String TABLE_NAME = "topic-info";
-  private DynamoDbTable<TopicEntity> topicInfoTable =
-      enhancedClient.table(TABLE_NAME, TableSchema.fromBean(TopicEntity.class));
+  private DynamoDbEnhancedClient enhancedClient;
+  private DynamoDbTable<TopicEntity> topicInfoTable;
+
+  TopicDaoDynamoDbImpl(DynamoDbEnhancedClient dynamoDbEnhancedClient, DynamoDbTable<TopicEntity> topicInfoTable) {
+    enhancedClient = dynamoDbEnhancedClient;
+    this.topicInfoTable = topicInfoTable;
+  }
 
   @Override
   public void saveTopicInfo(Topic topic) {
@@ -28,7 +31,11 @@ public class TopicDaoDynamoDbImpl implements TopicDao {
 
   @Override
   public Optional<Topic> getTopicInfo(Topic topic) {
-    String topicName = topic.getName();
+    return getTopicInfo(topic.getName());
+  }
+
+  @Override
+  public Optional<Topic> getTopicInfo(String topicName) {
     TopicEntity topicEntity = topicInfoTable.getItem(Key.builder()
         .partitionValue(topicName)
         .build());

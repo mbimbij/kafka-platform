@@ -3,7 +3,6 @@ package com.example.authorization.infra;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.example.authorization.core.AuthorizationDecider;
-import com.example.authorization.core.Group;
 import com.example.authorization.core.Topic;
 import com.example.authorization.core.User;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Slf4j
 public class Handler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
