@@ -100,7 +100,6 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>ec2</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.auth0</groupId>

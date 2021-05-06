@@ -23,6 +23,11 @@ Resources:
       FunctionName: !Ref ApplicationName
       MemorySize: 256
       Timeout: 30
+      Environment:
+        EnvironmentVariables:
+          - Name: ACCOUNT_ID
+            Type: PLAINTEXT
+            Value: !Ref AWS::AccountId
       # Function's execution role
       Policies:
         - AWSLambdaBasicExecutionRole
@@ -34,6 +39,6 @@ Resources:
             - Effect: "Allow"
               Action:
                 - "lambda:InvokeFunction"
-              Resource: 'arn:aws:lambda:eu-west-3:274314838444:function:topic-details'
+              Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:topic-details'
       Tracing: Active
       AutoPublishAlias: live
