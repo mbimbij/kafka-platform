@@ -1,4 +1,4 @@
-package com.example.topics.infra.dao;
+package com.example.topics.infra.dynamodb;
 
 import com.example.topics.core.Group;
 import com.example.topics.core.TopicDatabaseInfo;
@@ -15,14 +15,14 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TopicDaoDynamoDbImplRemoteIT {
+class TopicDaoDynamoDbRemoteIT {
   private String TEST_TOPIC_NAME = UUID.randomUUID().toString();
-  private TopicDaoDynamoDbImpl topicDaoDynamoDbImpl;
+  private TopicDaoDynamoDb topicDaoDynamoDb;
 
   {
-    DynamoDbEnhancedClient enhancedClient = DynamoDbEnhancedClientFactory.createDynamoDbEnhancedClient();
-    DynamoDbTable<TopicEntity> dynamoDbTable = enhancedClient.table(TopicDaoDynamoDbImpl.TABLE_NAME, TableSchema.fromBean(TopicEntity.class));
-    topicDaoDynamoDbImpl = new TopicDaoDynamoDbImpl(enhancedClient, dynamoDbTable);
+    DynamoDbEnhancedClient enhancedClient = TopicDaoDynamoDbFactory.createDynamoDbEnhancedClient();
+    DynamoDbTable<TopicEntity> dynamoDbTable = enhancedClient.table(TopicDaoDynamoDb.TABLE_NAME, TableSchema.fromBean(TopicEntity.class));
+    topicDaoDynamoDb = new TopicDaoDynamoDb(enhancedClient, dynamoDbTable);
   }
 
   private TopicDatabaseInfo topicDatabaseInfo = TopicDatabaseInfo.builder()
@@ -32,24 +32,24 @@ class TopicDaoDynamoDbImplRemoteIT {
 
   @BeforeEach
   void setUp() {
-    topicDaoDynamoDbImpl.deleteTopicInfo(topicDatabaseInfo);
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(topicDatabaseInfo.getName())).isEmpty();
+    topicDaoDynamoDb.deleteTopicInfo(topicDatabaseInfo.getName());
+    assertThat(topicDaoDynamoDb.getTopicInfo(topicDatabaseInfo.getName())).isEmpty();
   }
 
   @AfterEach
   void tearDown() {
-    topicDaoDynamoDbImpl.deleteTopicInfo(topicDatabaseInfo);
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(topicDatabaseInfo.getName())).isEmpty();
+    topicDaoDynamoDb.deleteTopicInfo(topicDatabaseInfo.getName());
+    assertThat(topicDaoDynamoDb.getTopicInfo(topicDatabaseInfo.getName())).isEmpty();
   }
 
   @Test
   @Tag("remote")
   void canCreateTopicInfoInRemoteDatabase() {
     // WHEN
-    topicDaoDynamoDbImpl.saveTopicInfo(topicDatabaseInfo);
+    topicDaoDynamoDb.saveTopicInfo(topicDatabaseInfo);
 
     // THEN
-    Optional<TopicDatabaseInfo> topicInfoFromDatabase = topicDaoDynamoDbImpl.getTopicInfo(topicDatabaseInfo.getName());
+    Optional<TopicDatabaseInfo> topicInfoFromDatabase = topicDaoDynamoDb.getTopicInfo(topicDatabaseInfo.getName());
     assertThat(topicInfoFromDatabase).isNotEmpty();
     assertThat(topicInfoFromDatabase.get())
         .usingRecursiveComparison()

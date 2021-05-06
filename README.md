@@ -14,8 +14,8 @@
 
 # :fr: Description du projet
 
-Le but de ce projet est de s'entraîner au "platform engineering", appliquée à Kafka: mettre en place une API permettant 
-à des développeurs de créer, monitorer et administrer leurs topics en "self-service", sur le modèle d'une plate-forme 
+Le but de ce projet est de s'entraîner au "platform engineering", appliquée à Kafka: mettre en place une API permettant
+à des développeurs de créer, monitorer et administrer leurs topics en "self-service", sur le modèle d'une plate-forme
 similaire que j'ai eu l'occasion d'utiliser dans un contexte professionnel.
 
 D'autres mini-projets persos sur cette thématique à venir.
@@ -37,7 +37,7 @@ ssl.keyStore.password=changeit
 ssh.clientAuth=need
 ```
 
-Dans les configs du client shell, rajouter les props suivantes: 
+Dans les configs du client shell, rajouter les props suivantes:
 
 ```properties
 zookeeper.clientCnxnSocket=org.apache.zookeeper.ClientCnxnSocketNetty
@@ -65,27 +65,32 @@ zookeeper.set.acl=true
 ## kafka broker vs kafka client - TLS - autentification du serveur uniquement
 
 ### création de la paire de clé faisant office de ca root
+
 ```shell
 openssl req -x509 -config openssl-ca.cnf -newkey rsa:4096 -sha256 -nodes -out cacert.pem -outform PEM
 ```
 
 ### création des truststore pour le serveur et le client
+
 ```shell
 keytool -keystore client.truststore.jks -alias caroot -import -file cacert.pem -storepass changeit
 keytool -keystore server.truststore.jks -alias caroot -import -file cacert.pem -storepass changeit
 ```
 
 ### création du keystore du serveur
+
 ```shell
 keytool -keystore server.keystore.jks -alias localhost -validity 365 -genkey -keyalg RSA -storetype pkcs12 -storepass changeit
 ```
 
 ### création d'un csr pour le serveur
+
 ```shell
 keytool -certreq -alias localhost -file server.key.csr -keystore server.keystore.jks -storepass changeit -ext SAN=DNS:localhost,DNS:$(hostname),IP:127.0.0.1
 ```
 
 ### signature du csr du serveur par le root ca
+
 ```shell
 echo 01 > serial.txt
 touch index.txt
@@ -93,6 +98,7 @@ openssl ca -config openssl-ca.cnf -policy signing_policy -extensions signing_req
 ```
 
 ### update du keystore du serveur avec le ca root et la clé signée
+
 ```shell
 keytool -keystore server.keystore.jks -alias caroot -import -file cacert.pem -storepass changeit
 keytool -keystore server.keystore.jks -alias localhost -import -file server.key.signed.cer -storepass changeit
@@ -101,12 +107,14 @@ keytool -keystore server.keystore.jks -alias localhost -import -file server.key.
 ## kafka broker vs kafka client - multual TLS
 
 ### Création d'un truststore / keystore pour le client
+
 Utilisation du script `create-jks.sh $CLIENT_NAME_AND_HOSTNAME`
-En argument de ce script, le nom du client, qui sera utilisé: 
+En argument de ce script, le nom du client, qui sera utilisé:
 
 - dans le nom des fichiers
 - comme alias dans le keystore
-- comme extension "SAN", soit un hostname supplémentaire, pour la vérification du hostname (qu'il est déconseillé de désactiver)
+- comme extension "SAN", soit un hostname supplémentaire, pour la vérification du hostname (qu'il est déconseillé de
+  désactiver)
 
 Rajouter les props suivantes au niveau du broker, dans `server.properties`
 
@@ -146,8 +154,8 @@ Lister les utilisateurs
 
 # :gb: Project Description
 
-The goal of this project is to train in so-called "platform engineering", applied to Kafka: set up an API allowing 
-developpers to create, monitor and manage their topics in a self service fashion, inspired by a similar platform i 
-had the opportunity to use at work.
+The goal of this project is to train in so-called "platform engineering", applied to Kafka: set up an API allowing
+developpers to create, monitor and manage their topics in a self service fashion, inspired by a similar platform i had
+the opportunity to use at work.
 
 More pet projects on that topicDatabaseInfo to come.

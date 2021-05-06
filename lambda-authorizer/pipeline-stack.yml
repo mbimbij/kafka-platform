@@ -49,7 +49,7 @@ Resources:
           PolicyDocument:
             Statement:
               - Effect: Allow
-                Action: 
+                Action:
                   - s3:PutObject
                   - s3:GetObject
                   - s3:GetObjectVersion
@@ -123,10 +123,10 @@ Resources:
             Principal:
               Service:
                 - cloudformation.amazonaws.com
-#      ManagedPolicyArns:
-#        - arn:aws:iam::aws:policy/AWSCloudFormationFullAccess
-#        - arn:aws:iam::aws:policy/IAMFullAccess
-#        - arn:aws:iam::aws:policy/AWSLambda_FullAccess
+  #      ManagedPolicyArns:
+  #        - arn:aws:iam::aws:policy/AWSCloudFormationFullAccess
+  #        - arn:aws:iam::aws:policy/IAMFullAccess
+  #        - arn:aws:iam::aws:policy/AWSLambda_FullAccess
   PipelineRole:
     Type: 'AWS::IAM::Role'
     Description: IAM role for !Ref ApplicationName pipeline resource
@@ -173,7 +173,7 @@ Resources:
                 Resource:
                   - !Sub 'arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${SamStackName}/*'
               - Action:
-                - 'iam:PassRole'
+                  - 'iam:PassRole'
                 Resource:
                   - !GetAtt
                     - CloudFormationRole

@@ -2,7 +2,7 @@ package com.example.topics.details;
 
 import com.example.topics.BaseLocalDockerIT;
 import com.example.topics.core.Group;
-import com.example.topics.core.TopicDatabaseInfo;
+import com.example.topics.core.Topic;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -24,9 +24,8 @@ class GetTopicDetailsHandlerIT extends BaseLocalDockerIT {
     GetTopicDetailsHandler getTopicDetailsHandler = new GetTopicDetailsHandler();
 
     Group ownerGroup = new Group("group1");
-    TopicDatabaseInfo topicDatabaseInfo = new TopicDatabaseInfo(correlationId, ownerGroup);
-    kafkaProxy.createTopic(correlationId);
-    topicDao.saveTopicInfo(topicDatabaseInfo);
+    Topic topic = new Topic(correlationId, ownerGroup);
+    topicRepository.create(topic);
 
     String createTopicRequest = FileUtils.readFileToString(new File("src/test/resources/getTopicDetails.json"), StandardCharsets.UTF_8);
     Map<String, Object> request = new ObjectMapper().readValue(createTopicRequest, new TypeReference<>() {
@@ -34,9 +33,9 @@ class GetTopicDetailsHandlerIT extends BaseLocalDockerIT {
     request.put("topicName", correlationId);
 
     // WHEN
-    Optional<TopicDatabaseInfo> actualTopicDatabaseInfo = getTopicDetailsHandler.handleRequest(request, testContext);
+    Optional<Topic> actualTopicDatabaseInfo = getTopicDetailsHandler.handleRequest(request, testContext);
 
     // THEN
-    assertThat(actualTopicDatabaseInfo).hasValue(topicDatabaseInfo);
+    assertThat(actualTopicDatabaseInfo).hasValue(topic);
   }
 }

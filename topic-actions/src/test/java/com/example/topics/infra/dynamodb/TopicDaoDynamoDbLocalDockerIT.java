@@ -1,4 +1,4 @@
-package com.example.topics.infra.dao;
+package com.example.topics.infra.dynamodb;
 
 import com.example.topics.BaseLocalDockerIT;
 import com.example.topics.core.Group;
@@ -13,7 +13,7 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class TopicDaoDynamoDbImplLocalDockerIT extends BaseLocalDockerIT {
+class TopicDaoDynamoDbLocalDockerIT extends BaseLocalDockerIT {
 
   private Group testGroup = new Group("myGroup");
   private TopicDatabaseInfo testTopicDatabaseInfo;
@@ -21,25 +21,25 @@ class TopicDaoDynamoDbImplLocalDockerIT extends BaseLocalDockerIT {
   @BeforeEach
   void setUpSub() {
     testTopicDatabaseInfo = TopicDatabaseInfo.builder().name(correlationId).ownerGroup(testGroup).build();
-    topicDao.deleteTopicInfo(testTopicDatabaseInfo);
-    assertThat(topicDao.getTopicInfo(testTopicDatabaseInfo.getName())).isEmpty();
+    topicDaoDynamoDb.deleteTopicInfo(testTopicDatabaseInfo.getName());
+    assertThat(topicDaoDynamoDb.getTopicInfo(testTopicDatabaseInfo.getName())).isEmpty();
   }
 
   @AfterEach
   void tearDown() {
-    topicDao.deleteTopicInfo(testTopicDatabaseInfo);
-    assertThat(topicDao.getTopicInfo(testTopicDatabaseInfo.getName())).isEmpty();
+    topicDaoDynamoDb.deleteTopicInfo(testTopicDatabaseInfo.getName());
+    assertThat(topicDaoDynamoDb.getTopicInfo(testTopicDatabaseInfo.getName())).isEmpty();
   }
 
   @Test
   void givenNoTopicInfoInDynamo_whenSaveTopicInfo_thenTopicInfoCreated() {
     // GIVEN
-    assertThat(topicDao.getTopicInfo(correlationId)).isEmpty();
+    assertThat(topicDaoDynamoDb.getTopicInfo(correlationId)).isEmpty();
 
     // WHEN
-    topicDao.saveTopicInfo(testTopicDatabaseInfo);
+    topicDaoDynamoDb.saveTopicInfo(testTopicDatabaseInfo);
 
     // THEN
-    assertThat(topicDao.getTopicInfo(correlationId)).hasValueSatisfying(topic -> Objects.equals(topic.getName(), correlationId));
+    assertThat(topicDaoDynamoDb.getTopicInfo(correlationId)).hasValueSatisfying(topic -> Objects.equals(topic.getName(), correlationId));
   }
 }

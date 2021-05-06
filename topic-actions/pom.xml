@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.example</groupId>
-    <artifactId>topicDatabaseInfo-actions</artifactId>
+    <artifactId>topic-actions</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>topicDatabaseInfo-actions</name>
+    <name>topic-actions</name>
     <description>Demo project for AWS Lambda</description>
 
     <properties>
@@ -166,7 +166,8 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="com.github.edwgiz.maven_shade_plugin.log4j2_cache_transformer.PluginsCacheFileTransformer">
+                                <transformer
+                                        implementation="com.github.edwgiz.maven_shade_plugin.log4j2_cache_transformer.PluginsCacheFileTransformer">
                                 </transformer>
                             </transformers>
                         </configuration>
@@ -198,9 +199,9 @@
                 </executions>
                 <configuration>
                     <excludedGroups>manual</excludedGroups>
-<!--                    <excludes>-->
-<!--                        <exclude>**/*IT.java</exclude>-->
-<!--                    </excludes>-->
+                    <!--                    <excludes>-->
+                    <!--                        <exclude>**/*IT.java</exclude>-->
+                    <!--                    </excludes>-->
                 </configuration>
             </plugin>
         </plugins>

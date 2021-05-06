@@ -27,15 +27,15 @@ import lombok.Getter;
 @Getter
 @Builder
 public class TestContext implements Context {
-    private final String awsRequestId;
-    private final String logGroupName;
-    private final String logStreamName;
-    private final String functionName;
-    private final String functionVersion;
-    private final String invokedFunctionArn;
-    private final CognitoIdentity identity;
-    private final ClientContext clientContext;
-    private final int remainingTimeInMillis;
-    private final int memoryLimitInMB;
-    private final LambdaLogger logger;
+  private final String awsRequestId;
+  private final String logGroupName;
+  private final String logStreamName;
+  private final String functionName;
+  private final String functionVersion;
+  private final String invokedFunctionArn;
+  private final CognitoIdentity identity;
+  private final ClientContext clientContext;
+  private final int remainingTimeInMillis;
+  private final int memoryLimitInMB;
+  private final LambdaLogger logger;
 }

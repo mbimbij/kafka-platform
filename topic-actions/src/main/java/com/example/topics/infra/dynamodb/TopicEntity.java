@@ -1,4 +1,4 @@
-package com.example.topics.infra.dao;
+package com.example.topics.infra.dynamodb;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

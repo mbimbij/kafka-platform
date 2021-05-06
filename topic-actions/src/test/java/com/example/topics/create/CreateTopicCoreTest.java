@@ -15,14 +15,12 @@ class CreateTopicCoreTest {
 
   private static final String TEST_TOPIC_NAME = "testTopic";
   private CreateTopicCore createTopicCore;
-  private KafkaProxy kafkaProxy;
-  private TopicDao topicDao;
+  TopicRepository topicRepository;
 
   @BeforeEach
   void setUp() {
-    kafkaProxy = mock(KafkaProxy.class);
-    topicDao = mock(TopicDao.class);
-    createTopicCore = new CreateTopicCore(kafkaProxy, topicDao);
+    topicRepository = mock(TopicRepository.class);
+    createTopicCore = new CreateTopicCore(topicRepository);
   }
 
   @SneakyThrows
@@ -30,7 +28,7 @@ class CreateTopicCoreTest {
   void whenUserSendsCreateTopicRequest_thenTopicCreated_andInfoSavedToDatabase() {
     // GIVEN
     Group ownerGroup = new Group("group");
-    TopicDatabaseInfo topicDatabaseInfo = TopicDatabaseInfo.builder().name(TEST_TOPIC_NAME).ownerGroup(ownerGroup).build();
+    Topic topicDatabaseInfo = Topic.builder().name(TEST_TOPIC_NAME).ownerGroup(ownerGroup).build();
     User user = User.builder().name("user").groups(Collections.singletonList(ownerGroup)).build();
     CreateTopicRequest request = new CreateTopicRequest(topicDatabaseInfo, user);
 
@@ -38,8 +36,7 @@ class CreateTopicCoreTest {
     createTopicCore.createTopic(request);
 
     // THEN
-    verify(topicDao).saveTopicInfo(any(TopicDatabaseInfo.class));
-    verify(kafkaProxy).createTopic(TEST_TOPIC_NAME);
+    verify(topicRepository).create(any(Topic.class));
   }
 
   @SneakyThrows
@@ -48,9 +45,9 @@ class CreateTopicCoreTest {
     // GIVEN
     Group requestedOwnerGroup = new Group("group");
     Group anotherGroup = new Group("anotherGroup");
-    TopicDatabaseInfo topicDatabaseInfo = TopicDatabaseInfo.builder().name(TEST_TOPIC_NAME).ownerGroup(requestedOwnerGroup).build();
+    Topic topic = Topic.builder().name(TEST_TOPIC_NAME).ownerGroup(requestedOwnerGroup).build();
     User user = User.builder().name("user").groups(Collections.singletonList(anotherGroup)).build();
-    CreateTopicRequest request = new CreateTopicRequest(topicDatabaseInfo, user);
+    CreateTopicRequest request = new CreateTopicRequest(topic, user);
 
     // WHEN
     assertThatThrownBy(() -> createTopicCore.createTopic(request))
@@ -58,8 +55,7 @@ class CreateTopicCoreTest {
         .hasMessageContaining(CreateTopicCore.USER_NOT_IN_GROUP_ERROR_MESSAGE_EXCERPT);
 
     // THEN
-    verify(topicDao, never()).saveTopicInfo(any(TopicDatabaseInfo.class));
-    verify(kafkaProxy, never()).createTopic(anyString());
+    verify(topicRepository, never()).create(any(Topic.class));
   }
 
   @SneakyThrows
@@ -67,11 +63,11 @@ class CreateTopicCoreTest {
   void whenTopicAlreadyExists_thenDuplicateKeyException() {
     // GIVEN
     Group ownerGroup = new Group("group");
-    TopicDatabaseInfo topicDatabaseInfo = TopicDatabaseInfo.builder().name(TEST_TOPIC_NAME).ownerGroup(ownerGroup).build();
-    when(topicDao.getTopicInfo(topicDatabaseInfo.getName())).thenReturn(Optional.of(topicDatabaseInfo));
+    Topic topic = Topic.builder().name(TEST_TOPIC_NAME).ownerGroup(ownerGroup).build();
+    when(topicRepository.get(topic.getName())).thenReturn(Optional.of(topic));
 
     User user = User.builder().name("user").groups(Collections.singletonList(ownerGroup)).build();
-    CreateTopicRequest request = new CreateTopicRequest(topicDatabaseInfo, user);
+    CreateTopicRequest request = new CreateTopicRequest(topic, user);
 
     // WHEN
     assertThatThrownBy(() -> createTopicCore.createTopic(request))
@@ -79,7 +75,6 @@ class CreateTopicCoreTest {
         .hasMessageContaining(CreateTopicCore.TOPIC_ALREADY_EXISTS_ERROR_MESSAGE_EXCERPT);
 
     // THEN
-    verify(topicDao, never()).saveTopicInfo(any(TopicDatabaseInfo.class));
-    verify(kafkaProxy, never()).createTopic(anyString());
+    verify(topicRepository, never()).create(any(Topic.class));
   }
 }

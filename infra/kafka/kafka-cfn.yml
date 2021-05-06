@@ -35,19 +35,19 @@ Resources:
         EncryptionInTransit:
           ClientBroker: TLS_PLAINTEXT
           InCluster: true
-#      OpenMonitoring:
-#        Prometheus:
-#          JmxExporter:
-#            EnabledInBroker: "true"
-#          NodeExporter:
-#            EnabledInBroker: "true"
-#      ConfigurationInfo:
-#        Arn: ReplaceWithConfigurationArn
-#        Revision: 1
-#      ClientAuthentication:
-#        Tls:
-#          CertificateAuthorityArnList:
-#            - ReplaceWithCAArn
+      #      OpenMonitoring:
+      #        Prometheus:
+      #          JmxExporter:
+      #            EnabledInBroker: "true"
+      #          NodeExporter:
+      #            EnabledInBroker: "true"
+      #      ConfigurationInfo:
+      #        Arn: ReplaceWithConfigurationArn
+      #        Revision: 1
+      #      ClientAuthentication:
+      #        Tls:
+      #          CertificateAuthorityArnList:
+      #            - ReplaceWithCAArn
       Tags:
         Environment: Test
         Owner: QATeam
@@ -99,7 +99,7 @@ Resources:
     Properties:
       ImageId: ami-0d3f551818b21ed81
       InstanceType: t2.micro
-      SubnetId: !Select [ "1", !Split [',', Fn::ImportValue: !Sub '${NetworkingStackName}::SubnetsPublic'] ]
+      SubnetId: !Select [ "1", !Split [ ',', Fn::ImportValue: !Sub '${NetworkingStackName}::SubnetsPublic' ] ]
       KeyName: !Ref BastionHostKeyName
       SecurityGroupIds:
         - !GetAtt

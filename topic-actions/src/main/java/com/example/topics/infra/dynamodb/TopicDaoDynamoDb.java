@@ -1,25 +1,20 @@
-package com.example.topics.infra.dao;
+package com.example.topics.infra.dynamodb;
 
 import com.example.topics.core.Group;
 import com.example.topics.core.TopicDatabaseInfo;
-import com.example.topics.core.TopicDao;
+import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 
 import java.util.Optional;
 
-public class TopicDaoDynamoDbImpl implements TopicDao {
+@RequiredArgsConstructor
+public class TopicDaoDynamoDb {
   public static final String TABLE_NAME = "topic-info";
-  private DynamoDbEnhancedClient enhancedClient;
-  private DynamoDbTable<TopicEntity> topicInfoTable;
+  private final DynamoDbEnhancedClient enhancedClient;
+  private final DynamoDbTable<TopicEntity> topicInfoTable;
 
-  TopicDaoDynamoDbImpl(DynamoDbEnhancedClient dynamoDbEnhancedClient, DynamoDbTable<TopicEntity> topicInfoTable) {
-    enhancedClient = dynamoDbEnhancedClient;
-    this.topicInfoTable = topicInfoTable;
-  }
-
-  @Override
   public void saveTopicInfo(TopicDatabaseInfo topicDatabaseInfo) {
     TopicEntity topicEntity = TopicEntity.builder()
         .topicName(topicDatabaseInfo.getName())
@@ -29,7 +24,6 @@ public class TopicDaoDynamoDbImpl implements TopicDao {
     topicInfoTable.putItem(topicEntity);
   }
 
-  @Override
   public Optional<TopicDatabaseInfo> getTopicInfo(String topicName) {
     TopicEntity topicEntity = topicInfoTable.getItem(Key.builder()
         .partitionValue(topicName)
@@ -41,9 +35,7 @@ public class TopicDaoDynamoDbImpl implements TopicDao {
             .build());
   }
 
-  @Override
-  public void deleteTopicInfo(TopicDatabaseInfo topicDatabaseInfo) {
-    String topicName = topicDatabaseInfo.getName();
+  public void deleteTopicInfo(String topicName) {
     topicInfoTable.deleteItem(Key.builder()
         .partitionValue(topicName)
         .build());

@@ -6,12 +6,12 @@ public class EnvironmentVariables {
   private EnvironmentVariables() {
   }
 
-  public String get(String name){
+  public String get(String name) {
     return System.getenv(name);
   }
 
   public static EnvironmentVariables instance() {
-    if(instance == null){
+    if (instance == null) {
       instance = new EnvironmentVariables();
     }
     return instance;

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JwtUserMapper {
-  public User getUserFromJwt(String jwtString){
+  public User getUserFromJwt(String jwtString) {
     DecodedJWT decodedJWT = JWT.decode(jwtString);
     List<Group> groups = decodedJWT.getClaim("cognito:groups").asList(String.class).stream()
         .map(Group::new)

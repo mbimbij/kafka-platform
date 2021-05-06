@@ -3,7 +3,7 @@ package com.example.topics.create;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.example.topics.core.Group;
-import com.example.topics.core.TopicDatabaseInfo;
+import com.example.topics.core.Topic;
 import com.example.topics.core.User;
 import com.example.topics.infra.JwtUserMapper;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,7 +30,7 @@ public class CreateTopicHandler implements RequestHandler<Map<String, Object>, V
     User user = jwtUserMapper.getUserFromJwt(getAuthorizationToken(mapper.valueToTree(request)));
     Group ownerGroup = new Group((String) request.get("ownerGroup"));
     String topicName = (String) request.get("topicName");
-    TopicDatabaseInfo topicDatabaseInfo = TopicDatabaseInfo.builder().name(topicName).ownerGroup(ownerGroup).build();
+    Topic topicDatabaseInfo = Topic.builder().name(topicName).ownerGroup(ownerGroup).build();
     CreateTopicRequest createTopicRequest = new CreateTopicRequest(topicDatabaseInfo, user);
     handlerCore.createTopic(createTopicRequest);
     return null;

@@ -2,15 +2,15 @@ package com.example.topics.create;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.example.topics.TestContext;
-import com.example.topics.core.KafkaProxy;
-import com.example.topics.core.TopicDatabaseInfo;
-import com.example.topics.core.TopicDao;
-import com.example.topics.infra.dao.TopicDaoFactory;
-import com.example.topics.infra.kafka.KafkaProxyFactory;
+import com.example.topics.core.Topic;
+import com.example.topics.core.TopicRepository;
+import com.example.topics.infra.TopicRepositoryFactory;
+import com.example.topics.infra.TopicRepositoryImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
@@ -24,23 +24,22 @@ import static org.mockito.Mockito.*;
 class CreateTopicHandlerTest {
 
   private static final String TEST_TOPIC_NAME = "testTopic";
+  private TopicRepository topicRepository;
+  private CreateTopicHandler createTopicHandler;
+
+  @BeforeEach
+  void setUp() {
+    topicRepository = mock(TopicRepositoryImpl.class);
+    try (MockedStatic<TopicRepositoryFactory> topicRepositoryMockedStatic = mockStatic(TopicRepositoryFactory.class)) {
+      topicRepositoryMockedStatic.when(TopicRepositoryFactory::buildTopicRepositoryFactory).thenReturn(topicRepository);
+      createTopicHandler = new CreateTopicHandler();
+    }
+  }
 
   @SneakyThrows
   @Test
   void whenUserSendsCreateTopicRequest_thenTopicCreated_andInfoSavedToDatabase() {
     // GIVEN
-    TopicDao topicDao = mock(TopicDao.class);
-    KafkaProxy kafkaProxy = mock(KafkaProxy.class);
-    CreateTopicHandler createTopicHandler;
-    try (
-        MockedStatic<TopicDaoFactory> topicDaoFactoryMockedStatic = mockStatic(TopicDaoFactory.class);
-        MockedStatic<KafkaProxyFactory> kafkaProxyFactoryMockedStatic = mockStatic(KafkaProxyFactory.class)
-    ) {
-      topicDaoFactoryMockedStatic.when(TopicDaoFactory::buildTopicDao).thenReturn(topicDao);
-      kafkaProxyFactoryMockedStatic.when(KafkaProxyFactory::createKafkaProxy).thenReturn(kafkaProxy);
-      createTopicHandler = new CreateTopicHandler();
-    }
-
     String createTopicRequest = FileUtils.readFileToString(new File("src/test/resources/createTopic.json"), StandardCharsets.UTF_8);
     Map<String, Object> request = new ObjectMapper().readValue(createTopicRequest, new TypeReference<>() {
     });
@@ -51,26 +50,13 @@ class CreateTopicHandlerTest {
     createTopicHandler.handleRequest(request, testContext);
 
     // THEN
-    verify(topicDao).saveTopicInfo(any(TopicDatabaseInfo.class));
-    verify(kafkaProxy).createTopic(TEST_TOPIC_NAME);
+    verify(topicRepository).create(any(Topic.class));
   }
 
   @SneakyThrows
   @Test
   void whenUserDoesNotBelongToGroupRequested_thenIllegalArgumentException_andTopicNotCreated_andTopicInfoNotPersistedToDatabase() {
     // GIVEN
-    TopicDao topicDao = mock(TopicDao.class);
-    KafkaProxy kafkaProxy = mock(KafkaProxy.class);
-    CreateTopicHandler createTopicHandler;
-    try (
-        MockedStatic<TopicDaoFactory> topicDaoFactoryMockedStatic = mockStatic(TopicDaoFactory.class);
-        MockedStatic<KafkaProxyFactory> kafkaProxyFactoryMockedStatic = mockStatic(KafkaProxyFactory.class)
-    ) {
-      topicDaoFactoryMockedStatic.when(TopicDaoFactory::buildTopicDao).thenReturn(topicDao);
-      kafkaProxyFactoryMockedStatic.when(KafkaProxyFactory::createKafkaProxy).thenReturn(kafkaProxy);
-      createTopicHandler = new CreateTopicHandler();
-    }
-
     String createTopicRequest = FileUtils.readFileToString(new File("src/test/resources/createTopic.json"), StandardCharsets.UTF_8);
     Map<String, Object> request = new ObjectMapper().readValue(createTopicRequest, new TypeReference<>() {
     });
@@ -84,7 +70,6 @@ class CreateTopicHandlerTest {
         .hasMessageContaining(CreateTopicCore.USER_NOT_IN_GROUP_ERROR_MESSAGE_EXCERPT);
 
     // THEN
-    verify(topicDao, never()).saveTopicInfo(any(TopicDatabaseInfo.class));
-    verify(kafkaProxy, never()).createTopic(anyString());
+    verify(topicRepository, never()).create(any(Topic.class));
   }
 }

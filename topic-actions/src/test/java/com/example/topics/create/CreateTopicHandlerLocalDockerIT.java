@@ -34,7 +34,7 @@ class CreateTopicHandlerLocalDockerIT extends BaseLocalDockerIT {
     createTopicHandler.handleRequest(request, testContext);
 
     // THEN - topic infos are created in dynamo
-    assertThat(topicDao.getTopicInfo(correlationId)).hasValueSatisfying(topic -> Objects.equals(topic.getName(), correlationId));
+    assertThat(topicDaoDynamoDb.getTopicInfo(correlationId)).hasValueSatisfying(topic -> Objects.equals(topic.getName(), correlationId));
 
     // THEN - topic is created in Kafka cluster
     Collection<TopicDescription> topicDescriptions = Try.of(() -> adminClient.describeTopics(Collections.singleton(correlationId)).all().get())
