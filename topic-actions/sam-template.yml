@@ -33,7 +33,7 @@ Resources:
       Handler: 'com.example.topics.details.GetTopicDetailsHandler'
       Runtime: java11
       Description: Java function
-      FunctionName: !Ref ApplicationName
+      FunctionName: !Sub '${ApplicationName}-topic-details'
       MemorySize: 256
       Timeout: 30
       # Function's execution role
@@ -52,7 +52,7 @@ Resources:
       Handler: 'com.example.topics.create.CreateTopicHandler'
       Runtime: java11
       Description: Java function
-      FunctionName: !Ref ApplicationName
+      FunctionName: !Sub '${ApplicationName}-create-topic'
       MemorySize: 256
       Timeout: 30
       # Function's execution role
@@ -71,7 +71,7 @@ Resources:
       Handler: 'com.example.topics.create.DeleteTopicHandler'
       Runtime: java11
       Description: Java function
-      FunctionName: !Ref ApplicationName
+      FunctionName: !Sub '${ApplicationName}-delete-topic'
       MemorySize: 256
       Timeout: 30
       # Function's execution role

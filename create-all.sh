@@ -21,20 +21,6 @@ aws cloudformation deploy \
   --capabilities CAPABILITY_NAMED_IAM
 
 echo-e  "\n##############################################################################"
-echo "creating cicd pipeline for topic CRUD actions platform"
-echo -e "##############################################################################\n"
-# create cicd pipeline for topics crud actions
-aws cloudformation deploy    \
-  --stack-name $APPLICATION_NAME-topic-actions-pipeline   \
-  --template-file topic-actions/pipeline-stack.yml    \
-  --capabilities CAPABILITY_NAMED_IAM   \
-  --parameter-overrides     \
-    ApplicationName=$APPLICATION_NAME-topic-actions     \
-    ApplicationDirectoryName=topic-actions \
-    GithubRepo=$GITHUB_REPO     \
-    SamStackName=$APPLICATION_NAME-topic-actions-sam-stack
-
-echo-e  "\n##############################################################################"
 echo "creating cicd pipeline for lambda authorizer platform"
 echo -e "##############################################################################\n"
 # create cicd pipeline for topics crud actions
@@ -47,6 +33,20 @@ aws cloudformation deploy    \
     ApplicationDirectoryName=lambda-authorizer \
     GithubRepo=$GITHUB_REPO     \
     SamStackName=$APPLICATION_NAME-lambda-authorizer-sam-stack
+
+echo-e  "\n##############################################################################"
+echo "creating cicd pipeline for topic CRUD actions platform"
+echo -e "##############################################################################\n"
+# create cicd pipeline for topics crud actions
+aws cloudformation deploy    \
+  --stack-name $APPLICATION_NAME-topic-actions-pipeline   \
+  --template-file topic-actions/pipeline-stack.yml    \
+  --capabilities CAPABILITY_NAMED_IAM   \
+  --parameter-overrides     \
+    ApplicationName=$APPLICATION_NAME-topic-actions     \
+    ApplicationDirectoryName=topic-actions \
+    GithubRepo=$GITHUB_REPO     \
+    SamStackName=$APPLICATION_NAME-topic-actions-sam-stack
 
 echo-e  "\n##############################################################################"
 echo "creating kafka cluster"
