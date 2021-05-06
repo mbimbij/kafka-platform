@@ -8,18 +8,18 @@ fi
 APPLICATION_NAME=$1
 KAFKA_STACK_NAME=$APPLICATION_NAME-kafka
 NETWORKING_STACK_NAME=$APPLICATION_NAME-network
-source infra.env
+source infra/infra.env
 
 echo "##############################################################################"
 echo "Deleting lambda authorizer pipeline"
 echo -e "##############################################################################\n"
-./scripts/empty-s3-bucket.sh $AWS_REGION-$ACCOUNT_ID-$APPLICATION_NAME-lambda-authorizer-bucket-pipeline
+./scripts/empty-s3-bucket.sh $AWS_REGION-$ACCOUNT_ID-$APPLICATION_NAME-lambda-authorizer-pipeline-bucket
 aws cloudformation delete-stack --stack-name $APPLICATION_NAME-lambda-authorizer-pipeline
 
 echo "##############################################################################"
 echo "Deleting lambda authorizer pipeline"
 echo -e "##############################################################################\n"
-./scripts/empty-s3-bucket.sh $AWS_REGION-$ACCOUNT_ID-$APPLICATION_NAME-topic-actions-bucket-pipeline
+./scripts/empty-s3-bucket.sh $AWS_REGION-$ACCOUNT_ID-$APPLICATION_NAME-topic-actions-pipeline-bucket
 aws cloudformation delete-stack --stack-name $APPLICATION_NAME-topic-actions-pipeline
 
 # delete kafka stack

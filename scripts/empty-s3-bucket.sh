@@ -5,4 +5,4 @@ if [ -z $1 ]; then
   exit 1
 fi
 
-aws s3 rm s3://$AWS_REGION-$ACCOUNT_ID-$1-bucket-pipeline --recursive
+aws s3 rm s3://$1 --recursive
