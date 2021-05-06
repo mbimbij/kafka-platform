@@ -33,13 +33,13 @@ class TopicDaoDynamoDbImplRemoteIT {
   @BeforeEach
   void setUp() {
     topicDaoDynamoDbImpl.deleteTopicInfo(topic);
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(topic)).isEmpty();
+    assertThat(topicDaoDynamoDbImpl.getTopicInfo(topic.getName())).isEmpty();
   }
 
   @AfterEach
   void tearDown() {
     topicDaoDynamoDbImpl.deleteTopicInfo(topic);
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(topic)).isEmpty();
+    assertThat(topicDaoDynamoDbImpl.getTopicInfo(topic.getName())).isEmpty();
   }
 
   @Test
@@ -49,7 +49,7 @@ class TopicDaoDynamoDbImplRemoteIT {
     topicDaoDynamoDbImpl.saveTopicInfo(topic);
 
     // THEN
-    Optional<Topic> topicInfoFromDatabase = topicDaoDynamoDbImpl.getTopicInfo(topic);
+    Optional<Topic> topicInfoFromDatabase = topicDaoDynamoDbImpl.getTopicInfo(topic.getName());
     assertThat(topicInfoFromDatabase).isNotEmpty();
     assertThat(topicInfoFromDatabase.get())
         .usingRecursiveComparison()

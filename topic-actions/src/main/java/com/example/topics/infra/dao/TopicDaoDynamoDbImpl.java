@@ -30,11 +30,6 @@ public class TopicDaoDynamoDbImpl implements TopicDao {
   }
 
   @Override
-  public Optional<Topic> getTopicInfo(Topic topic) {
-    return getTopicInfo(topic.getName());
-  }
-
-  @Override
   public Optional<Topic> getTopicInfo(String topicName) {
     TopicEntity topicEntity = topicInfoTable.getItem(Key.builder()
         .partitionValue(topicName)

@@ -22,13 +22,13 @@ class TopicDaoDynamoDbImplLocalDockerIT extends BaseLocalDockerIT {
   void setUpSub() {
     testTopic = Topic.builder().name(correlationId).ownerGroup(testGroup).build();
     topicDaoDynamoDbImpl.deleteTopicInfo(testTopic);
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(testTopic)).isEmpty();
+    assertThat(topicDaoDynamoDbImpl.getTopicInfo(testTopic.getName())).isEmpty();
   }
 
   @AfterEach
   void tearDown() {
     topicDaoDynamoDbImpl.deleteTopicInfo(testTopic);
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(testTopic)).isEmpty();
+    assertThat(topicDaoDynamoDbImpl.getTopicInfo(testTopic.getName())).isEmpty();
   }
 
   @Test

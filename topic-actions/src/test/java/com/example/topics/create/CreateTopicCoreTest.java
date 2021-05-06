@@ -2,12 +2,13 @@ package com.example.topics.create;
 
 import com.example.topics.core.*;
 import lombok.SneakyThrows;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class CreateTopicCoreTest {
@@ -52,9 +53,30 @@ class CreateTopicCoreTest {
     CreateTopicRequest request = new CreateTopicRequest(topic, user);
 
     // WHEN
-    Assertions.assertThatThrownBy(() -> createTopicCore.createTopic(request))
+    assertThatThrownBy(() -> createTopicCore.createTopic(request))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining(CreateTopicCore.USER_NOT_IN_GROUP_ERROR_MESSAGE_EXCERPT);
+
+    // THEN
+    verify(topicDao, never()).saveTopicInfo(any(Topic.class));
+    verify(kafkaProxy, never()).createTopic(anyString());
+  }
+
+  @SneakyThrows
+  @Test
+  void whenTopicAlreadyExists_thenDuplicateKeyException() {
+    // GIVEN
+    Group ownerGroup = new Group("group");
+    Topic topic = Topic.builder().name(TEST_TOPIC_NAME).ownerGroup(ownerGroup).build();
+    when(topicDao.getTopicInfo(topic.getName())).thenReturn(Optional.of(topic));
+
+    User user = User.builder().name("user").groups(Collections.singletonList(ownerGroup)).build();
+    CreateTopicRequest request = new CreateTopicRequest(topic, user);
+
+    // WHEN
+    assertThatThrownBy(() -> createTopicCore.createTopic(request))
+        .isInstanceOf(DuplicateEntryException.class)
+        .hasMessageContaining(CreateTopicCore.TOPIC_ALREADY_EXISTS_ERROR_MESSAGE_EXCERPT);
 
     // THEN
     verify(topicDao, never()).saveTopicInfo(any(Topic.class));
