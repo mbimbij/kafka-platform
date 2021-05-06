@@ -30,20 +30,4 @@ public class GetTopicDetailsHandler implements RequestHandler<Map<String, Object
     return topicRepository.get(topicName);
   }
 
-  private TopicDatabaseInfo getMockTopic(String topicName) {
-    String groupName;
-
-    if (Objects.equals(topicName, "topic1")) {
-      groupName = "group1";
-    } else if (Objects.equals(topicName, "topic2")) {
-      groupName = "group2";
-    } else {
-      groupName = "unknown";
-    }
-
-    return TopicDatabaseInfo.builder()
-        .name(topicName)
-        .ownerGroup(new Group(groupName))
-        .build();
-  }
 }
