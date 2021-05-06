@@ -2,8 +2,8 @@ package com.example.topics.infra;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.topics.sharedcore.Group;
-import com.example.topics.sharedcore.User;
+import com.example.topics.core.Group;
+import com.example.topics.core.User;
 
 import java.util.List;
 import java.util.stream.Collectors;

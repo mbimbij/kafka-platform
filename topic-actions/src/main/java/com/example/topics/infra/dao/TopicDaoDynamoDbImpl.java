@@ -1,8 +1,8 @@
 package com.example.topics.infra.dao;
 
-import com.example.topics.sharedcore.Group;
-import com.example.topics.sharedcore.Topic;
-import com.example.topics.sharedcore.TopicDao;
+import com.example.topics.core.Group;
+import com.example.topics.core.Topic;
+import com.example.topics.core.TopicDao;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;

@@ -1,15 +1,14 @@
 package com.example.topics.infra.dao;
 
 import com.example.topics.BaseLocalDockerIT;
-import com.example.topics.sharedcore.Group;
-import com.example.topics.sharedcore.Topic;
+import com.example.topics.core.Group;
+import com.example.topics.core.Topic;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

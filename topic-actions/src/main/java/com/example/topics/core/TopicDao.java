@@ -1,4 +1,4 @@
-package com.example.topics.sharedcore;
+package com.example.topics.core;
 
 import java.util.Optional;
 

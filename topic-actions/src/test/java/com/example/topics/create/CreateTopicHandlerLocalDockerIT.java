@@ -27,7 +27,8 @@ class CreateTopicHandlerLocalDockerIT extends BaseLocalDockerIT {
     // GIVEN
     CreateTopicHandler createTopicHandler = new CreateTopicHandler();
     String createTopicRequest = FileUtils.readFileToString(new File("src/test/resources/createTopic.json"), StandardCharsets.UTF_8);
-    Map<String, Object> request = new ObjectMapper().readValue(createTopicRequest, new TypeReference<Map<String, Object>>() {});
+    Map<String, Object> request = new ObjectMapper().readValue(createTopicRequest, new TypeReference<>() {
+    });
     request.put("topicName", correlationId);
 
     // WHEN

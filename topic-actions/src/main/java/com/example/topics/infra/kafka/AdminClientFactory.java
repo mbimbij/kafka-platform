@@ -1,5 +1,6 @@
-package com.example.topics.infra;
+package com.example.topics.infra.kafka;
 
+import com.example.topics.infra.EnvironmentVariables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;

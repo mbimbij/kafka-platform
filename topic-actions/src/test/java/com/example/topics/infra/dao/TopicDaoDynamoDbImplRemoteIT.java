@@ -1,7 +1,7 @@
 package com.example.topics.infra.dao;
 
-import com.example.topics.sharedcore.Group;
-import com.example.topics.sharedcore.Topic;
+import com.example.topics.core.Group;
+import com.example.topics.core.Topic;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;

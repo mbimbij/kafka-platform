@@ -1,13 +1,13 @@
 package com.example.topics;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.example.topics.infra.AdminClientFactory;
+import com.example.topics.infra.kafka.AdminClientFactory;
 import com.example.topics.infra.EnvironmentVariables;
 import com.example.topics.infra.dao.DynamoDbEnhancedClientFactory;
 import com.example.topics.infra.dao.TopicDaoDynamoDbImpl;
 import com.example.topics.infra.dao.TopicDaoFactory;
 import com.example.topics.infra.dao.TopicEntity;
-import com.example.topics.sharedcore.TopicDao;
+import com.example.topics.core.TopicDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.AfterAll;
