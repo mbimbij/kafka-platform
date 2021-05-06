@@ -37,6 +37,7 @@ public class Handler implements RequestHandler<Map<String, Object>, Map<String, 
     User user = jwtUserMapper.getUserFromJwt(authorizationToken);
     log.info("topic: {}", topic);
     log.info("user: {}", user);
+    log.info("current region: {}", Ec2Client.create());
 
     boolean isAuthorized = authorizationDecider.isDeletionAuthorized(user, topic);
     String authorizationResponse = isAuthorized ? "Allow" : "Deny";
