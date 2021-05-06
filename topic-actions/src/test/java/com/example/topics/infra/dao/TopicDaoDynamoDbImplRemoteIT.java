@@ -1,7 +1,7 @@
 package com.example.topics.infra.dao;
 
 import com.example.topics.core.Group;
-import com.example.topics.core.Topic;
+import com.example.topics.core.TopicDatabaseInfo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -25,35 +25,35 @@ class TopicDaoDynamoDbImplRemoteIT {
     topicDaoDynamoDbImpl = new TopicDaoDynamoDbImpl(enhancedClient, dynamoDbTable);
   }
 
-  private Topic topic = Topic.builder()
+  private TopicDatabaseInfo topicDatabaseInfo = TopicDatabaseInfo.builder()
       .name(TEST_TOPIC_NAME)
       .ownerGroup(new Group("myGroup"))
       .build();
 
   @BeforeEach
   void setUp() {
-    topicDaoDynamoDbImpl.deleteTopicInfo(topic);
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(topic.getName())).isEmpty();
+    topicDaoDynamoDbImpl.deleteTopicInfo(topicDatabaseInfo);
+    assertThat(topicDaoDynamoDbImpl.getTopicInfo(topicDatabaseInfo.getName())).isEmpty();
   }
 
   @AfterEach
   void tearDown() {
-    topicDaoDynamoDbImpl.deleteTopicInfo(topic);
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(topic.getName())).isEmpty();
+    topicDaoDynamoDbImpl.deleteTopicInfo(topicDatabaseInfo);
+    assertThat(topicDaoDynamoDbImpl.getTopicInfo(topicDatabaseInfo.getName())).isEmpty();
   }
 
   @Test
   @Tag("remote")
   void canCreateTopicInfoInRemoteDatabase() {
     // WHEN
-    topicDaoDynamoDbImpl.saveTopicInfo(topic);
+    topicDaoDynamoDbImpl.saveTopicInfo(topicDatabaseInfo);
 
     // THEN
-    Optional<Topic> topicInfoFromDatabase = topicDaoDynamoDbImpl.getTopicInfo(topic.getName());
+    Optional<TopicDatabaseInfo> topicInfoFromDatabase = topicDaoDynamoDbImpl.getTopicInfo(topicDatabaseInfo.getName());
     assertThat(topicInfoFromDatabase).isNotEmpty();
     assertThat(topicInfoFromDatabase.get())
         .usingRecursiveComparison()
-        .isEqualTo(topic);
+        .isEqualTo(topicDatabaseInfo);
   }
 
 }

@@ -1,6 +1,7 @@
 package com.example.topics;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.example.topics.core.KafkaProxy;
 import com.example.topics.infra.kafka.AdminClientFactory;
 import com.example.topics.infra.EnvironmentVariables;
 import com.example.topics.infra.dao.DynamoDbEnhancedClientFactory;
@@ -8,6 +9,7 @@ import com.example.topics.infra.dao.TopicDaoDynamoDbImpl;
 import com.example.topics.infra.dao.TopicDaoFactory;
 import com.example.topics.infra.dao.TopicEntity;
 import com.example.topics.core.TopicDao;
+import com.example.topics.infra.kafka.KafkaProxyFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.AfterAll;
@@ -35,7 +37,7 @@ public abstract class BaseLocalDockerIT {
   protected String correlationId;
   protected static final String DYNAMODB_SERVICE_NAME = "dynamodb_1";
   protected static String LOCAL_DYNAMODB_URL;
-  protected static TopicDao topicDaoDynamoDbImpl;
+  protected static TopicDao topicDao;
   protected static DockerComposeContainer<?> dynamoDbContainer =
       new DockerComposeContainer<>(new File("../docker-compose.yml"))
           .withExposedService(DYNAMODB_SERVICE_NAME, 8000)
@@ -46,6 +48,7 @@ public abstract class BaseLocalDockerIT {
   protected final Context testContext = TestContext.builder().build();
   protected static DynamoDbEnhancedClient dynamoDbEnhancedClient;
   protected static AdminClient adminClient;
+  protected static KafkaProxy kafkaProxy;
   private static final EnvironmentVariables environmentVariables = spy(EnvironmentVariables.instance());
 
   static {
@@ -59,8 +62,9 @@ public abstract class BaseLocalDockerIT {
     setDynamoDbLocalUrl();
     initDynamoDbLocalClient();
     createTopicInfoTableIfNotExists();
-    topicDaoDynamoDbImpl = TopicDaoFactory.buildTopicDao();
+    topicDao = TopicDaoFactory.buildTopicDao();
     adminClient = AdminClientFactory.createAdminClient();
+    kafkaProxy = KafkaProxyFactory.createKafkaProxy();
   }
 
   @BeforeEach

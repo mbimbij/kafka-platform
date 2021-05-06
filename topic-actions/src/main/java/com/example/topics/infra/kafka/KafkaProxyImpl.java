@@ -1,12 +1,14 @@
 package com.example.topics.infra.kafka;
 
 import com.example.topics.core.KafkaProxy;
+import com.example.topics.core.TopicClusterInfo;
 import com.example.topics.infra.EnvironmentVariables;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
@@ -32,5 +34,14 @@ public class KafkaProxyImpl implements KafkaProxy {
     NewTopic newTopic = new NewTopic(topicName, 1, (short) 1);
     Set<NewTopic> newTopics = Collections.singleton(newTopic);
     admin.createTopics(newTopics).all().get(topicCreationTimeoutMillis, TimeUnit.MILLISECONDS);
+  }
+
+  @SneakyThrows
+  @Override
+  public Optional<TopicClusterInfo> getTopicClusterInfo(String topicName) {
+    return admin.listTopics().names()
+        .thenApply(Collection::stream).get()
+        .map(TopicClusterInfo::new)
+        .findFirst();
   }
 }

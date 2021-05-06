@@ -2,7 +2,7 @@ package com.example.topics.infra.dao;
 
 import com.example.topics.BaseLocalDockerIT;
 import com.example.topics.core.Group;
-import com.example.topics.core.Topic;
+import com.example.topics.core.TopicDatabaseInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,30 +16,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TopicDaoDynamoDbImplLocalDockerIT extends BaseLocalDockerIT {
 
   private Group testGroup = new Group("myGroup");
-  private Topic testTopic;
+  private TopicDatabaseInfo testTopicDatabaseInfo;
 
   @BeforeEach
   void setUpSub() {
-    testTopic = Topic.builder().name(correlationId).ownerGroup(testGroup).build();
-    topicDaoDynamoDbImpl.deleteTopicInfo(testTopic);
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(testTopic.getName())).isEmpty();
+    testTopicDatabaseInfo = TopicDatabaseInfo.builder().name(correlationId).ownerGroup(testGroup).build();
+    topicDao.deleteTopicInfo(testTopicDatabaseInfo);
+    assertThat(topicDao.getTopicInfo(testTopicDatabaseInfo.getName())).isEmpty();
   }
 
   @AfterEach
   void tearDown() {
-    topicDaoDynamoDbImpl.deleteTopicInfo(testTopic);
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(testTopic.getName())).isEmpty();
+    topicDao.deleteTopicInfo(testTopicDatabaseInfo);
+    assertThat(topicDao.getTopicInfo(testTopicDatabaseInfo.getName())).isEmpty();
   }
 
   @Test
   void givenNoTopicInfoInDynamo_whenSaveTopicInfo_thenTopicInfoCreated() {
     // GIVEN
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(correlationId)).isEmpty();
+    assertThat(topicDao.getTopicInfo(correlationId)).isEmpty();
 
     // WHEN
-    topicDaoDynamoDbImpl.saveTopicInfo(testTopic);
+    topicDao.saveTopicInfo(testTopicDatabaseInfo);
 
     // THEN
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(correlationId)).hasValueSatisfying(topic -> Objects.equals(topic.getName(), correlationId));
+    assertThat(topicDao.getTopicInfo(correlationId)).hasValueSatisfying(topic -> Objects.equals(topic.getName(), correlationId));
   }
 }

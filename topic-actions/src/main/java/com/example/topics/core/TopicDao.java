@@ -3,9 +3,9 @@ package com.example.topics.core;
 import java.util.Optional;
 
 public interface TopicDao {
-  public void saveTopicInfo(Topic topic);
+  public void saveTopicInfo(TopicDatabaseInfo topicDatabaseInfo);
 
-  Optional<Topic> getTopicInfo(String topicName);
+  Optional<TopicDatabaseInfo> getTopicInfo(String topicName);
 
-  void deleteTopicInfo(Topic topic);
+  void deleteTopicInfo(TopicDatabaseInfo topicDatabaseInfo);
 }

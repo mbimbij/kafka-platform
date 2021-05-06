@@ -3,7 +3,7 @@ package com.example.topics.create;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.example.topics.TestContext;
 import com.example.topics.core.KafkaProxy;
-import com.example.topics.core.Topic;
+import com.example.topics.core.TopicDatabaseInfo;
 import com.example.topics.core.TopicDao;
 import com.example.topics.infra.dao.TopicDaoFactory;
 import com.example.topics.infra.kafka.KafkaProxyFactory;
@@ -51,7 +51,7 @@ class CreateTopicHandlerTest {
     createTopicHandler.handleRequest(request, testContext);
 
     // THEN
-    verify(topicDao).saveTopicInfo(any(Topic.class));
+    verify(topicDao).saveTopicInfo(any(TopicDatabaseInfo.class));
     verify(kafkaProxy).createTopic(TEST_TOPIC_NAME);
   }
 
@@ -84,7 +84,7 @@ class CreateTopicHandlerTest {
         .hasMessageContaining(CreateTopicCore.USER_NOT_IN_GROUP_ERROR_MESSAGE_EXCERPT);
 
     // THEN
-    verify(topicDao, never()).saveTopicInfo(any(Topic.class));
+    verify(topicDao, never()).saveTopicInfo(any(TopicDatabaseInfo.class));
     verify(kafkaProxy, never()).createTopic(anyString());
   }
 }

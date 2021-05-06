@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vavr.control.Try;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.TopicDescription;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
@@ -35,7 +34,7 @@ class CreateTopicHandlerLocalDockerIT extends BaseLocalDockerIT {
     createTopicHandler.handleRequest(request, testContext);
 
     // THEN - topic infos are created in dynamo
-    assertThat(topicDaoDynamoDbImpl.getTopicInfo(correlationId)).hasValueSatisfying(topic -> Objects.equals(topic.getName(), correlationId));
+    assertThat(topicDao.getTopicInfo(correlationId)).hasValueSatisfying(topic -> Objects.equals(topic.getName(), correlationId));
 
     // THEN - topic is created in Kafka cluster
     Collection<TopicDescription> topicDescriptions = Try.of(() -> adminClient.describeTopics(Collections.singleton(correlationId)).all().get())

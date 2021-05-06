@@ -150,4 +150,4 @@ The goal of this project is to train in so-called "platform engineering", applie
 developpers to create, monitor and manage their topics in a self service fashion, inspired by a similar platform i 
 had the opportunity to use at work.
 
-More pet projects on that topic to come.
+More pet projects on that topicDatabaseInfo to come.

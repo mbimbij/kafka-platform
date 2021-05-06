@@ -13,16 +13,16 @@ public class CreateTopicCore {
   public static final  String TOPIC_ALREADY_EXISTS_ERROR_MESSAGE_EXCERPT = "topic already exists:";
 
   public CreateTopicResponse createTopic(CreateTopicRequest request){
-    validateUserBelongsToSpecifiedOwnerGroup(request.getUser(), request.getTopic().getOwnerGroup());
+    validateUserBelongsToSpecifiedOwnerGroup(request.getUser(), request.getTopicDatabaseInfo().getOwnerGroup());
     validateTopicNotAlreadyExists(request);
-    kafkaProxy.createTopic(request.getTopic().getName());
-    topicDao.saveTopicInfo(request.getTopic());
+    kafkaProxy.createTopic(request.getTopicDatabaseInfo().getName());
+    topicDao.saveTopicInfo(request.getTopicDatabaseInfo());
     return new CreateTopicResponse();
   }
 
   private void validateTopicNotAlreadyExists(CreateTopicRequest request) {
-    if(topicDao.getTopicInfo(request.getTopic().getName()).isPresent()){
-      throw new DuplicateEntryException(TOPIC_ALREADY_EXISTS_ERROR_MESSAGE_EXCERPT + " \"" + request.getTopic().getName()+"\"");
+    if(topicDao.getTopicInfo(request.getTopicDatabaseInfo().getName()).isPresent()){
+      throw new DuplicateEntryException(TOPIC_ALREADY_EXISTS_ERROR_MESSAGE_EXCERPT + " \"" + request.getTopicDatabaseInfo().getName()+"\"");
     }
   }
 

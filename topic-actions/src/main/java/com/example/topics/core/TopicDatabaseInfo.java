@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 @Data
-public class Topic {
+public class TopicDatabaseInfo {
   private String name;
   private Group ownerGroup;
 }
