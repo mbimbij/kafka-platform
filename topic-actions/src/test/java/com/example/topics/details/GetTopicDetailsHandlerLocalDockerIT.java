@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GetTopicDetailsHandlerIT extends BaseLocalDockerIT {
+class GetTopicDetailsHandlerLocalDockerIT extends BaseLocalDockerIT {
   @SneakyThrows
   @Test
   void givenTopicExistsInClusterAndDatabase_thenReturnsTopicInfoFromDatabase() {

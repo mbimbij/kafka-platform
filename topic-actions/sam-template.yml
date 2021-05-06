@@ -29,9 +29,46 @@ Resources:
   GetTopicDetailsHandler:
     Type: AWS::Serverless::Function
     Properties:
-      #      CodeUri: !Sub 'target/${ApplicationName}-${ApplicationVersion}.jar'
       CodeUri: 'target/topic-actions-0.0.1-SNAPSHOT.jar'
       Handler: 'com.example.topics.details.GetTopicDetailsHandler'
+      Runtime: java11
+      Description: Java function
+      FunctionName: !Ref ApplicationName
+      MemorySize: 256
+      Timeout: 30
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+      Tracing: Active
+      AutoPublishAlias: live
+
+  CreateTopicHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: 'target/topic-actions-0.0.1-SNAPSHOT.jar'
+      Handler: 'com.example.topics.create.CreateTopicHandler'
+      Runtime: java11
+      Description: Java function
+      FunctionName: !Ref ApplicationName
+      MemorySize: 256
+      Timeout: 30
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+      Tracing: Active
+      AutoPublishAlias: live
+
+  DeleteTopicHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: 'target/topic-actions-0.0.1-SNAPSHOT.jar'
+      Handler: 'com.example.topics.create.DeleteTopicHandler'
       Runtime: java11
       Description: Java function
       FunctionName: !Ref ApplicationName

@@ -24,7 +24,13 @@ public class KafkaClusterProxy {
   }
 
   @SneakyThrows
-  public boolean topicExistsInKafkaCluster(TopicRepositoryImpl topicRepository) {
-    return !admin.listTopics().names().get().isEmpty();
+  public boolean topicExistsInKafkaCluster(String topicName) {
+    return admin.listTopics().names()
+        .get().stream()
+        .anyMatch(topicName::equals);
+  }
+
+  public void delete(String topicName) {
+    admin.deleteTopics(Collections.singleton(topicName));
   }
 }

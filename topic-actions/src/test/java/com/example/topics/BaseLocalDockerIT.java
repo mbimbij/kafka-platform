@@ -7,9 +7,9 @@ import com.example.topics.infra.TopicRepositoryFactory;
 import com.example.topics.infra.dynamodb.TopicDaoDynamoDb;
 import com.example.topics.infra.dynamodb.TopicDaoDynamoDbFactory;
 import com.example.topics.infra.dynamodb.TopicEntity;
+import com.example.topics.infra.kafka.KafkaClusterProxy;
 import com.example.topics.infra.kafka.KafkaClusterProxyFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,6 @@ public abstract class BaseLocalDockerIT {
   protected String correlationId;
   protected static final String DYNAMODB_SERVICE_NAME = "dynamodb_1";
   protected static String LOCAL_DYNAMODB_URL;
-  protected static TopicDaoDynamoDb topicDaoDynamoDb;
   protected static DockerComposeContainer<?> dynamoDbContainer =
       new DockerComposeContainer<>(new File("../docker-compose.yml"))
           .withExposedService(DYNAMODB_SERVICE_NAME, 8000)
@@ -45,8 +44,9 @@ public abstract class BaseLocalDockerIT {
                   .withStartupTimeout(Duration.ofSeconds(30)));
   protected final Context testContext = TestContext.builder().build();
   protected static DynamoDbEnhancedClient dynamoDbEnhancedClient;
-  protected static AdminClient adminClient;
   protected static TopicRepository topicRepository;
+  protected static KafkaClusterProxy kafkaClusterProxy;
+  protected static TopicDaoDynamoDb topicDaoDynamoDb;
   private static final EnvironmentVariables environmentVariables = spy(EnvironmentVariables.instance());
 
   static {
@@ -61,7 +61,7 @@ public abstract class BaseLocalDockerIT {
     initDynamoDbLocalClient();
     createTopicInfoTableIfNotExists();
     topicDaoDynamoDb = TopicDaoDynamoDbFactory.buildTopicDaoDynamoDb();
-    adminClient = KafkaClusterProxyFactory.createAdminClient();
+    kafkaClusterProxy = KafkaClusterProxyFactory.buildKafkaClusterProxy();
     topicRepository = TopicRepositoryFactory.buildTopicRepositoryFactory();
   }
 

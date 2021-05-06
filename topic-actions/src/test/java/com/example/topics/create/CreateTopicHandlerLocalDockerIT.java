@@ -3,16 +3,12 @@ package com.example.topics.create;
 import com.example.topics.BaseLocalDockerIT;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.vavr.control.Try;
 import lombok.SneakyThrows;
-import org.apache.kafka.clients.admin.TopicDescription;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,15 +29,8 @@ class CreateTopicHandlerLocalDockerIT extends BaseLocalDockerIT {
     // WHEN
     createTopicHandler.handleRequest(request, testContext);
 
-    // THEN - topic infos are created in dynamo
+    // THEN
     assertThat(topicDaoDynamoDb.getTopicInfo(correlationId)).hasValueSatisfying(topic -> Objects.equals(topic.getName(), correlationId));
-
-    // THEN - topic is created in Kafka cluster
-    Collection<TopicDescription> topicDescriptions = Try.of(() -> adminClient.describeTopics(Collections.singleton(correlationId)).all().get())
-        .map(Map::values)
-        .get();
-    assertThat(topicDescriptions).hasSize(1);
-    assertThat(topicDescriptions)
-        .anyMatch(topicDescription -> Objects.equals(topicDescription.name(), correlationId));
+    assertThat(kafkaClusterProxy.topicExistsInKafkaCluster(correlationId)).isTrue();
   }
 }
