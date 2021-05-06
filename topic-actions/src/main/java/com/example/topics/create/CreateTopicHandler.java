@@ -20,6 +20,7 @@ public class CreateTopicHandler implements RequestHandler<Map<String, Object>, V
   private final TopicDao topicDao;
   private JwtUserMapper jwtUserMapper = new JwtUserMapper();
   private ObjectMapper mapper = new ObjectMapper();
+  public static final String USER_NOT_IN_GROUP_ERROR_MESSAGE_EXCERPT = "does not belong to the group";
 
   public CreateTopicHandler() {
     topicDao = TopicDaoFactory.buildTopicDao();
@@ -43,7 +44,7 @@ public class CreateTopicHandler implements RequestHandler<Map<String, Object>, V
 
   private void validateUserBelongsToSpecifiedOwnerGroup(User user, Group ownerGroup) {
     if(!user.getGroups().contains(ownerGroup)){
-      throw new IllegalArgumentException("user \""+ user.getName()+"\" does not belong to the group \""+ ownerGroup
+      throw new IllegalArgumentException("user \""+ user.getName()+ "\" " + USER_NOT_IN_GROUP_ERROR_MESSAGE_EXCERPT + " \"" + ownerGroup
           +"\" and as such cannot create a topic with that group as its owner");
     }
   }
