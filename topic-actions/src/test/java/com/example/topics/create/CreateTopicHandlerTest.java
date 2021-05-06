@@ -81,7 +81,7 @@ class CreateTopicHandlerTest {
     // WHEN
     Assertions.assertThatThrownBy(() -> createTopicHandler.handleRequest(request, testContext))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessageContaining(CreateTopicHandler.USER_NOT_IN_GROUP_ERROR_MESSAGE_EXCERPT);
+        .hasMessageContaining(CreateTopicCore.USER_NOT_IN_GROUP_ERROR_MESSAGE_EXCERPT);
 
     // THEN
     verify(topicDao, never()).saveTopicInfo(any(Topic.class));
