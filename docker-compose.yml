@@ -56,11 +56,12 @@ services:
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
 
   dynamodb:
+    hostname: dynamodb
     image: amazon/dynamodb-local:latest
     expose:
       - 8000
-#    ports:
-#      - "8000:8000"
+    ports:
+      - "8000:8000"
 
 #  schema-registry:
 #    image: confluentinc/cp-schema-registry:6.1.1

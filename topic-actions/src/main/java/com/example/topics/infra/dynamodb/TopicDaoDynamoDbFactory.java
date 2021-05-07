@@ -1,8 +1,14 @@
 package com.example.topics.infra.dynamodb;
 
+import com.example.topics.infra.EnvironmentVariables;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.utils.StringUtils;
+
+import java.net.URI;
 
 public class TopicDaoDynamoDbFactory {
   public static TopicDaoDynamoDb buildTopicDaoDynamoDb() {
@@ -12,6 +18,22 @@ public class TopicDaoDynamoDbFactory {
   }
 
   public static DynamoDbEnhancedClient createDynamoDbEnhancedClient() {
-    return DynamoDbEnhancedClient.create();
+    String dynamodbServiceUrlOverride = EnvironmentVariables.instance().get("DYNAMODB_SERVICE_URL_OVERRIDE");
+    DynamoDbEnhancedClient dynamoDbEnhancedClient;
+    if(StringUtils.isBlank(dynamodbServiceUrlOverride)){
+      dynamoDbEnhancedClient = DynamoDbEnhancedClient.create();
+    }else {
+      dynamoDbEnhancedClient = DynamoDbEnhancedClient.builder()
+          .dynamoDbClient(createOverridenClient(dynamodbServiceUrlOverride))
+          .build();
+    }
+    return dynamoDbEnhancedClient;
+  }
+
+  protected static DynamoDbClient createOverridenClient(String dynamodbServiceUrlOverride) {
+    return DynamoDbClient.builder()
+        .endpointOverride(URI.create(dynamodbServiceUrlOverride))
+        .region(Region.EU_WEST_3)
+        .build();
   }
 }

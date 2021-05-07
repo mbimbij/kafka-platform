@@ -152,6 +152,21 @@ Lister les utilisateurs
 ./bin/kafka-configs.sh --zookeeper localhost:2181 --entity-type users --describe
 ```
 
+## test en local
+
+### invocation des lambdas:
+1. lancer kafka et dynamodb via `docker-compose`
+2. créer la table `topic-info` dans le dynamoDB local: 
+```shell
+aws dynamodb create-table \
+    --table-name topic-info \
+    --attribute-definitions AttributeName=topicName,AttributeType=S \
+    --key-schema AttributeName=topicName,KeyType=HASH \
+    --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
+    --endpoint-url http://localhost:8000
+```
+3. invoquer la lambda via `sam-local`: `sam local invoke -t sam-template.yml ApplicationName-topic-details --docker-network kafka-platform_default --env-vars sam-local-env-vars.json -e get-topic-details.json`
+
 # :gb: Project Description
 
 The goal of this project is to train in so-called "platform engineering", applied to Kafka: set up an API allowing

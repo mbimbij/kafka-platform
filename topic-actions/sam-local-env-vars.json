@@ -1,0 +1,6 @@
+{
+  "Parameters": {
+    "BOOTSTRAP_SERVERS": "http://broker:29092",
+    "DYNAMODB_SERVICE_URL_OVERRIDE": "http://dynamodb:8000"
+  }
+}

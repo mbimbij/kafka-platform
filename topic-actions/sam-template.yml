@@ -26,6 +26,31 @@ Resources:
       SSESpecification:
         SSEEnabled: true
 
+  Api:
+    Type: AWS::Serverless::Api
+    MethodSettings:
+      DataTraceEnabled: true
+      MetricsEnabled: true
+      HttpMethod: '*'
+      LoggingLevel: INFO
+    AccessLogSetting:
+      DestinationArn: !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:${ApiAccessLogGroup}'
+      Format: '$context.identity.sourceIp $context.authorizer.claims.sub [$context.requestTime] "$context.httpMethod $context.resourcePath $context.protocol" $context.status $context.requestId $context.awsEndpointRequestId $context.xrayTraceId $context.responseLatency $context.integrationLatency "$context.error.message"'
+    Properties:
+      Name: KafkaPlatformCrudApi
+      StageName: live
+      TracingEnabled: true
+      Cors:
+        AllowOrigin: "'*'"
+        AllowMethods: "'OPTIONS,HEAD,GET,PUT,POST,DELETE'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+
+  ApiAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/apigateway/AccessLog-${Api}
+      RetentionInDays: 1
+
   GetTopicDetailsHandler:
     Type: AWS::Serverless::Function
     Properties:
@@ -34,7 +59,7 @@ Resources:
       Runtime: java11
       Description: Java function
       FunctionName: !Sub '${ApplicationName}-topic-details'
-      MemorySize: 256
+      MemorySize: 512
       Timeout: 30
       # Function's execution role
       Policies:
@@ -44,6 +69,17 @@ Resources:
         - AWSLambdaVPCAccessExecutionRole
       Tracing: Active
       AutoPublishAlias: live
+      Environment:
+        Variables:
+          BOOTSTRAP_SERVERS:
+          DYNAMODB_SERVICE_URL_OVERRIDE:
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /topics/{topic}
+            Method: GET
+            RestApiId: !Ref Api
 
   CreateTopicHandler:
     Type: AWS::Serverless::Function
