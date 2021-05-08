@@ -74,7 +74,7 @@ Resources:
       Environment:
         Variables:
           BOOTSTRAP_SERVERS: !Ref KafkaBootstrapServers
-          DYNAMODB_SERVICE_URL_OVERRIDE:
+          DYNAMODB_SERVICE_URL_OVERRIDE: ""
       Events:
         ApiEvent:
           Type: Api
@@ -104,7 +104,7 @@ Resources:
       Environment:
         Variables:
           BOOTSTRAP_SERVERS: !Ref KafkaBootstrapServers
-          DYNAMODB_SERVICE_URL_OVERRIDE:
+          DYNAMODB_SERVICE_URL_OVERRIDE: ""
       Events:
         ApiEvent:
           Type: Api
@@ -134,7 +134,7 @@ Resources:
       Environment:
         Variables:
           BOOTSTRAP_SERVERS: !Ref KafkaBootstrapServers
-          DYNAMODB_SERVICE_URL_OVERRIDE:
+          DYNAMODB_SERVICE_URL_OVERRIDE: ""
       Events:
         ApiEvent:
           Type: Api

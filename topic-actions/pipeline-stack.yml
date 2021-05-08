@@ -15,6 +15,9 @@ Parameters:
   SamStackName:
     Type: String
     Description: Name of the SAM stack
+  KakfaClusterName:
+    Type: String
+    Description: Kakfa Cluster Name
 
 Resources:
   S3Bucket:
@@ -292,5 +295,5 @@ Resources:
                   - Arn
                 Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND,CAPABILITY_IAM
                 TemplatePath: !Sub 'BuildOutput::${ApplicationDirectoryName}/out-sam-template.yml'
-                ParameterOverrides: !Sub '{"ApplicationName":"${ApplicationName}"}'
+                ParameterOverrides: !Sub '{"ApplicationName":"${ApplicationName}","KafkaBootstrapServers":"${KakfaClusterName}"}'
                 StackName: !Ref SamStackName

@@ -24,10 +24,8 @@ Resources:
       MemorySize: 256
       Timeout: 30
       Environment:
-        EnvironmentVariables:
-          - Name: ACCOUNT_ID
-            Type: PLAINTEXT
-            Value: !Ref AWS::AccountId
+        Variables:
+          ACCOUNT_ID: !Ref AWS::AccountId
       # Function's execution role
       Policies:
         - AWSLambdaBasicExecutionRole

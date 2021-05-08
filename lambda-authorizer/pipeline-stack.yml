@@ -15,9 +15,6 @@ Parameters:
   SamStackName:
     Type: String
     Description: Name of the SAM stack
-  KakfaClusterName:
-    Type: String
-    Description: Kakfa Cluster Name
 
 Resources:
   S3Bucket:
