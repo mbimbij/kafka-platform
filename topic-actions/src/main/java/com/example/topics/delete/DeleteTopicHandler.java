@@ -19,6 +19,7 @@ import java.util.Map;
 public class DeleteTopicHandler implements RequestHandler<Map<String, Object>, GatewayResponse<Void>> {
 
   private final TopicRepository topicRepository;
+  private ObjectMapper mapper = new ObjectMapper();
 
   public DeleteTopicHandler() {
     topicRepository = TopicRepositoryFactory.buildTopicRepositoryFactory();
@@ -27,7 +28,8 @@ public class DeleteTopicHandler implements RequestHandler<Map<String, Object>, G
   @SneakyThrows
   @Override
   public GatewayResponse<Void> handleRequest(Map<String, Object> request, Context context) {
-    String topicName = (String) request.get("topicName");
+    JsonNode bodyTree = mapper.readTree((String) request.get("body"));
+    String topicName = bodyTree.get("topicName").asText();
     topicRepository.delete(topicName);
     return GatewayResponse.createHttp200Response(null);
   }

@@ -8,6 +8,7 @@ import com.example.topics.infra.TopicRepositoryFactory;
 import com.example.topics.infra.TopicRepositoryImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
@@ -26,6 +28,7 @@ class CreateTopicHandlerTest {
   private static final String TEST_TOPIC_NAME = "testTopic";
   private TopicRepository topicRepository;
   private CreateTopicHandler createTopicHandler;
+  protected final ObjectMapper mapper = new ObjectMapper().registerModule(new Jdk8Module());
 
   @BeforeEach
   void setUp() {
@@ -60,8 +63,10 @@ class CreateTopicHandlerTest {
     String createTopicRequest = FileUtils.readFileToString(new File("src/test/resources/createTopic.json"), StandardCharsets.UTF_8);
     Map<String, Object> request = new ObjectMapper().readValue(createTopicRequest, new TypeReference<>() {
     });
-    request.put("topicName", TEST_TOPIC_NAME);
-    request.put("ownerGroup", "anotherGroup");
+    Map<String, String> body = new HashMap<>();
+    body.put("topicName", TEST_TOPIC_NAME);
+    body.put("ownerGroup", "anotherGroup");
+    request.put("body", mapper.writeValueAsString(body));
     Context testContext = TestContext.builder().build();
 
     // WHEN

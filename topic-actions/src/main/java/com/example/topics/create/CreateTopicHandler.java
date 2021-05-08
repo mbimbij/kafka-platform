@@ -29,9 +29,10 @@ public class CreateTopicHandler implements RequestHandler<Map<String, Object>, G
   @SneakyThrows
   @Override
   public GatewayResponse<CreateTopicResponse> handleRequest(Map<String, Object> request, Context context) {
+    JsonNode bodyTree = mapper.readTree((String) request.get("body"));
     User user = jwtUserMapper.getUserFromJwt(getAuthorizationToken(mapper.valueToTree(request)));
-    Group ownerGroup = new Group((String) request.get("ownerGroup"));
-    String topicName = (String) request.get("topicName");
+    Group ownerGroup = new Group(bodyTree.get("ownerGroup").asText());
+    String topicName = bodyTree.get("topicName").asText();
     Topic topicDatabaseInfo = Topic.builder().name(topicName).ownerGroup(ownerGroup).build();
     CreateTopicRequest createTopicRequest = new CreateTopicRequest(topicDatabaseInfo, user);
     CreateTopicResponse createTopicResponse = handlerCore.createTopic(createTopicRequest);

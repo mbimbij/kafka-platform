@@ -1,6 +1,5 @@
 package com.example.topics.infra.kafka;
 
-import com.example.topics.infra.TopicRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -17,7 +16,7 @@ public class KafkaClusterProxy {
   private static final long defaultTopicCreationTimeoutMillis = 5000;
 
   @SneakyThrows
-  public void createKafkaCluster(String topicName, TopicRepositoryImpl topicRepository) {
+  public void createKafkaCluster(String topicName) {
     NewTopic newTopic = new NewTopic(topicName, 1, (short) 1);
     Set<NewTopic> newTopics = Collections.singleton(newTopic);
     admin.createTopics(newTopics).all().get(topicCreationTimeoutMillis, TimeUnit.MILLISECONDS);

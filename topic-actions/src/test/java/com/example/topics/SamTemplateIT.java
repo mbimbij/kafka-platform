@@ -82,8 +82,8 @@ public class SamTemplateIT {
     @SneakyThrows
     @Test
     void verifyHandler() {
-      String expectedHandlerFullName = CreateTopicHandler.class.getName();
-      String handlerName = CreateTopicHandler.class.getSimpleName();
+      String expectedHandlerFullName = DeleteTopicHandler.class.getName();
+      String handlerName = DeleteTopicHandler.class.getSimpleName();
       verifyHandlerBase(expectedHandlerFullName, handlerName);
     }
   }
@@ -114,6 +114,7 @@ public class SamTemplateIT {
   void name() {
     Optional optional = Optional.empty();
     ObjectMapper objectMapper = new ObjectMapper().registerModule(new Jdk8Module());
-    System.out.println(objectMapper.writeValueAsString(optional));
+    String x = objectMapper.writeValueAsString(null);
+    System.out.println(x);
   }
 }

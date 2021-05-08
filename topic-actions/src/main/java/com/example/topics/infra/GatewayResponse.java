@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * POJO containing response object for API Gateway.
@@ -18,7 +19,8 @@ import java.util.Map;
 public class GatewayResponse<T> {
   public static final Map<String, String> APPLICATION_JSON = Collections.singletonMap("Content-Type",
       "application/json");
-  private static final ObjectMapper objectMapper = new ObjectMapper().registerModule(new Jdk8Module());
+  private static final ObjectMapper objectMapper = new ObjectMapper()
+      .registerModule(new Jdk8Module());
   private final String body;
   private final Map<String, String> headers;
   private final int statusCode;
@@ -34,7 +36,8 @@ public class GatewayResponse<T> {
   @SneakyThrows
   public GatewayResponse(final T body, final Map<String, String> headers, final int statusCode) {
     this.statusCode = statusCode;
-    this.body = objectMapper.writeValueAsString(body);
+    String bodyString = objectMapper.writeValueAsString(body);
+    this.body = Objects.equals(bodyString, "null") ? "{}" : bodyString;
     this.headers = Collections.unmodifiableMap(new HashMap<>(headers));
   }
 

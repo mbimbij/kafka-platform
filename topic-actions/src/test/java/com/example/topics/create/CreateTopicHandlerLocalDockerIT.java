@@ -12,6 +12,7 @@ import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,8 +28,11 @@ class CreateTopicHandlerLocalDockerIT extends BaseLocalDockerIT {
     String createTopicRequest = FileUtils.readFileToString(new File("src/test/resources/createTopic.json"), StandardCharsets.UTF_8);
     Map<String, Object> request = new ObjectMapper().readValue(createTopicRequest, new TypeReference<>() {
     });
-    request.put("topicName", correlationId);
-    CreateTopicResponse expectedCreateTopicResponse = new CreateTopicResponse(correlationId, new Group((String) request.get("ownerGroup")));
+    Map<String, String> body = new HashMap<>();
+    body.put("topicName", correlationId);
+    body.put("ownerGroup", "dev");
+    request.put("body", mapper.writeValueAsString(body));
+    CreateTopicResponse expectedCreateTopicResponse = new CreateTopicResponse(correlationId, new Group("dev"));
 
     // WHEN
     GatewayResponse<CreateTopicResponse> gatewayResponse = createTopicHandler.handleRequest(request, testContext);

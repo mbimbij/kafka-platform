@@ -91,7 +91,7 @@ Resources:
       Runtime: java11
       Description: Java function
       FunctionName: !Sub '${ApplicationName}-create-topic'
-      MemorySize: 256
+      MemorySize: 512
       Timeout: 30
       # Function's execution role
       Policies:
@@ -101,16 +101,27 @@ Resources:
         - AWSLambdaVPCAccessExecutionRole
       Tracing: Active
       AutoPublishAlias: live
+      Environment:
+        Variables:
+          BOOTSTRAP_SERVERS: !Ref KafkaBootstrapServers
+          DYNAMODB_SERVICE_URL_OVERRIDE:
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /topics
+            Method: POST
+            RestApiId: !Ref Api
 
   DeleteTopicHandler:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: 'target/topic-actions-0.0.1-SNAPSHOT.jar'
-      Handler: 'com.example.topics.create.DeleteTopicHandler'
+      Handler: 'com.example.topics.delete.DeleteTopicHandler'
       Runtime: java11
       Description: Java function
       FunctionName: !Sub '${ApplicationName}-delete-topic'
-      MemorySize: 256
+      MemorySize: 512
       Timeout: 30
       # Function's execution role
       Policies:
@@ -120,3 +131,14 @@ Resources:
         - AWSLambdaVPCAccessExecutionRole
       Tracing: Active
       AutoPublishAlias: live
+      Environment:
+        Variables:
+          BOOTSTRAP_SERVERS: !Ref KafkaBootstrapServers
+          DYNAMODB_SERVICE_URL_OVERRIDE:
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /topics/{topic}
+            Method: DELETE
+            RestApiId: !Ref Api

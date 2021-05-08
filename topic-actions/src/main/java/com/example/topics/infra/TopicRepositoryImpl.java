@@ -21,7 +21,7 @@ public class TopicRepositoryImpl implements TopicRepository {
   public void create(Topic topic) {
     String topicName = topic.getName();
     String ownerGroupName = topic.getOwnerGroup().getName();
-    kafkaClusterProxy.createKafkaCluster(topicName, this);
+    kafkaClusterProxy.createKafkaCluster(topicName);
     TopicDatabaseInfo topicDatabaseInfo = TopicDatabaseInfo.builder().name(topicName).ownerGroup(topic.getOwnerGroup()).build();
 //    TopicEntity topicEntity = TopicEntity.builder().topicName(topicName).ownerGroup(ownerGroupName).build();
     topicDaoDynamoDb.saveTopicInfo(topicDatabaseInfo);

@@ -165,7 +165,10 @@ aws dynamodb create-table \
     --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
     --endpoint-url http://localhost:8000
 ```
-3. invoquer la lambda via `sam-local`: `sam local invoke -t sam-template.yml ApplicationName-topic-details --docker-network kafka-platform_default --env-vars sam-local-env-vars.json -e src/test/resources/getTopicDetails.json`
+3. invoquer la lambda via `sam-local`: 
+  - créer un topic: `sam local invoke -t sam-template.yml ApplicationName-create-topic --docker-network kafka-platform_default --env-vars sam-local-env-vars.json -e src/test/resources/createTopic.json`  
+  - récupérer les détails d'un topic: `sam local invoke -t sam-template.yml ApplicationName-topic-details --docker-network kafka-platform_default --env-vars sam-local-env-vars.json -e src/test/resources/getTopicDetails.json`
+  - supprimer un topic: ``
 
 # :gb: Project Description
 
