@@ -6,6 +6,7 @@ import com.example.topics.details.GetTopicDetailsHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import lombok.SneakyThrows;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -107,5 +109,11 @@ public class SamTemplateIT {
     assertThat(actualCodeUri).isEqualTo(expectedCodeUri);
   }
 
-
+  @SneakyThrows
+  @Test
+  void name() {
+    Optional optional = Optional.empty();
+    ObjectMapper objectMapper = new ObjectMapper().registerModule(new Jdk8Module());
+    System.out.println(objectMapper.writeValueAsString(optional));
+  }
 }

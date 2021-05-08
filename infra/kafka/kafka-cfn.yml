@@ -2,9 +2,6 @@ Parameters:
   KakfaClusterName:
     Type: String
     Description: Kakfa Cluster Name
-  KubernetesStackName:
-    Type: String
-    Description: Kakfa Cluster Stack Name
   NetworkingStackName:
     Type: String
     Description: Networking Stack Name
@@ -125,3 +122,5 @@ Outputs:
       - PublicDnsName
   KakfaClusterArn:
     Value: !Ref KakfaCluster
+    Export:
+      Name: !Sub '${KakfaClusterName}::ClusterArn'

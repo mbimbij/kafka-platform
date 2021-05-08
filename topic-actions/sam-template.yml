@@ -10,9 +10,11 @@ Parameters:
     Default: '0.0.1-SNAPSHOT'
     Type: String
     Description: Application Version
+  KafkaBootstrapServers:
+    Type: String
+    Description: Kafka Bootstrap Servers
 
 Resources:
-
   DynamoDbTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
@@ -71,7 +73,7 @@ Resources:
       AutoPublishAlias: live
       Environment:
         Variables:
-          BOOTSTRAP_SERVERS:
+          BOOTSTRAP_SERVERS: !Ref KafkaBootstrapServers
           DYNAMODB_SERVICE_URL_OVERRIDE:
       Events:
         ApiEvent:

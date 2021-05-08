@@ -22,7 +22,6 @@ aws cloudformation deploy   \
   --capabilities CAPABILITY_NAMED_IAM   \
   --parameter-overrides \
     NetworkingStackName=$NETWORKING_STACK_NAME \
-    KubernetesStackName=$KUBERNETES_STACK_NAME \
     KMSKafkaArn=$kafkaKmsArn \
     NumberOfBrokerNodes=$numberOfBrokerNodes \
     KakfaClusterName=$KAFKA_CLUSTER_NAME \

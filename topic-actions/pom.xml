@@ -33,6 +33,7 @@
         <maven-model.version>3.8.1</maven-model.version>
         <kafka.version>2.8.0</kafka.version>
         <vavr.version>0.10.3</vavr.version>
+        <lambda-logging.version>1.0.3</lambda-logging.version>
     </properties>
 
     <dependencyManagement>
@@ -44,6 +45,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -51,7 +59,7 @@
         <dependency>
             <groupId>io.symphonia</groupId>
             <artifactId>lambda-logging</artifactId>
-            <version>1.0.3</version>
+            <version>${lambda-logging.version}</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
@@ -82,7 +90,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
@@ -115,6 +122,10 @@
             <groupId>io.vavr</groupId>
             <artifactId>vavr</artifactId>
             <version>${vavr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
         </dependency>
 
 
@@ -151,7 +162,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>${jackson.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -211,7 +221,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <excludedGroups>manual</excludedGroups>
+                    <excludedGroups>manual, remote</excludedGroups>
                     <!--                    <excludes>-->
                     <!--                        <exclude>**/*IT.java</exclude>-->
                     <!--                    </excludes>-->

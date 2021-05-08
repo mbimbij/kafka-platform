@@ -9,6 +9,8 @@ import com.example.topics.infra.dynamodb.TopicDaoDynamoDbFactory;
 import com.example.topics.infra.dynamodb.TopicEntity;
 import com.example.topics.infra.kafka.KafkaClusterProxy;
 import com.example.topics.infra.kafka.KafkaClusterProxyFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -47,7 +49,8 @@ public abstract class BaseLocalDockerIT {
   protected static TopicRepository topicRepository;
   protected static KafkaClusterProxy kafkaClusterProxy;
   protected static TopicDaoDynamoDb topicDaoDynamoDb;
-  private static final EnvironmentVariables environmentVariables = spy(EnvironmentVariables.instance());
+  protected static final EnvironmentVariables environmentVariables = spy(EnvironmentVariables.instance());
+  protected final ObjectMapper mapper = new ObjectMapper().registerModule(new Jdk8Module());
 
   static {
     dynamoDbContainer.start();

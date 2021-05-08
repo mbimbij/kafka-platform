@@ -24,13 +24,13 @@ public class TopicDaoDynamoDbFactory {
       dynamoDbEnhancedClient = DynamoDbEnhancedClient.create();
     }else {
       dynamoDbEnhancedClient = DynamoDbEnhancedClient.builder()
-          .dynamoDbClient(createOverridenClient(dynamodbServiceUrlOverride))
+          .dynamoDbClient(createClientWithOverridenUrl(dynamodbServiceUrlOverride))
           .build();
     }
     return dynamoDbEnhancedClient;
   }
 
-  protected static DynamoDbClient createOverridenClient(String dynamodbServiceUrlOverride) {
+  protected static DynamoDbClient createClientWithOverridenUrl(String dynamodbServiceUrlOverride) {
     return DynamoDbClient.builder()
         .endpointOverride(URI.create(dynamodbServiceUrlOverride))
         .region(Region.EU_WEST_3)
