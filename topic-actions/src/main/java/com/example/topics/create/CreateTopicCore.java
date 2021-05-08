@@ -15,7 +15,7 @@ public class CreateTopicCore {
     validateTopicNotAlreadyExists(request);
     Topic topic = Topic.builder().name(request.getTopic().getName()).ownerGroup(request.getTopic().getOwnerGroup()).build();
     topicRepository.create(topic);
-    return new CreateTopicResponse();
+    return new CreateTopicResponse(topic.getName(), topic.getOwnerGroup());
   }
 
   private void validateTopicNotAlreadyExists(CreateTopicRequest request) {

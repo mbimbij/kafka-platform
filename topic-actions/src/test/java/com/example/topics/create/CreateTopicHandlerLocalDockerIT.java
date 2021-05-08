@@ -1,9 +1,12 @@
 package com.example.topics.create;
 
 import com.example.topics.BaseLocalDockerIT;
+import com.example.topics.core.Group;
+import com.example.topics.infra.GatewayResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
@@ -25,12 +28,17 @@ class CreateTopicHandlerLocalDockerIT extends BaseLocalDockerIT {
     Map<String, Object> request = new ObjectMapper().readValue(createTopicRequest, new TypeReference<>() {
     });
     request.put("topicName", correlationId);
+    CreateTopicResponse expectedCreateTopicResponse = new CreateTopicResponse(correlationId, new Group((String) request.get("ownerGroup")));
 
     // WHEN
-    createTopicHandler.handleRequest(request, testContext);
+    GatewayResponse<CreateTopicResponse> gatewayResponse = createTopicHandler.handleRequest(request, testContext);
+    CreateTopicResponse actualCreateTopicResponse = mapper.readValue(gatewayResponse.getBody(), CreateTopicResponse.class);
 
     // THEN
-    assertThat(topicDaoDynamoDb.getTopicInfo(correlationId)).hasValueSatisfying(topic -> Objects.equals(topic.getName(), correlationId));
-    assertThat(kafkaClusterProxy.topicExistsInKafkaCluster(correlationId)).isTrue();
+    SoftAssertions.assertSoftly(softAssertions -> {
+      assertThat(actualCreateTopicResponse).isEqualTo(expectedCreateTopicResponse);
+      assertThat(topicDaoDynamoDb.getTopicInfo(correlationId)).hasValueSatisfying(topic -> Objects.equals(topic.getName(), correlationId));
+      assertThat(kafkaClusterProxy.topicExistsInKafkaCluster(correlationId)).isTrue();
+    });
   }
 }
