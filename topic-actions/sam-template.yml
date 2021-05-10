@@ -10,9 +10,15 @@ Parameters:
     Default: '0.0.1-SNAPSHOT'
     Type: String
     Description: Application Version
+  KakfaStackName:
+    Type: String
+    Description: Kakfa Cluster Stack Name
   KafkaBootstrapServers:
     Type: String
     Description: Kafka Bootstrap Servers
+  NetworkingStackName:
+    Type: String
+    Description: Networking Stack Name
 
 Resources:
   DynamoDbTable:
@@ -53,36 +59,6 @@ Resources:
       LogGroupName: !Sub /aws/apigateway/AccessLog-${Api}
       RetentionInDays: 1
 
-  GetTopicDetailsHandler:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: 'target/topic-actions-0.0.1-SNAPSHOT.jar'
-      Handler: 'com.example.topics.details.GetTopicDetailsHandler'
-      Runtime: java11
-      Description: Java function
-      FunctionName: !Sub '${ApplicationName}-topic-details'
-      MemorySize: 512
-      Timeout: 30
-      # Function's execution role
-      Policies:
-        - AWSLambdaBasicExecutionRole
-        - AWSLambda_ReadOnlyAccess
-        - AWSXrayWriteOnlyAccess
-        - AWSLambdaVPCAccessExecutionRole
-      Tracing: Active
-      AutoPublishAlias: live
-      Environment:
-        Variables:
-          BOOTSTRAP_SERVERS: !Ref KafkaBootstrapServers
-          DYNAMODB_SERVICE_URL_OVERRIDE: ""
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: /topics/{topic}
-            Method: GET
-            RestApiId: !Ref Api
-
   CreateTopicHandler:
     Type: AWS::Serverless::Function
     Properties:
@@ -99,6 +75,12 @@ Resources:
         - AWSLambda_ReadOnlyAccess
         - AWSXrayWriteOnlyAccess
         - AWSLambdaVPCAccessExecutionRole
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+              Resource: '*'
       Tracing: Active
       AutoPublishAlias: live
       Environment:
@@ -112,6 +94,55 @@ Resources:
             Path: /topics
             Method: POST
             RestApiId: !Ref Api
+      VpcConfig:
+        SecurityGroupIds:
+          - Fn::ImportValue: !Sub '${KakfaStackName}::BastionHostSecurityGroupId'
+        SubnetIds:
+          Fn::Split:
+            - ','
+            - Fn::ImportValue: !Sub '${NetworkingStackName}::SubnetsPrivate'
+  GetTopicDetailsHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: 'target/topic-actions-0.0.1-SNAPSHOT.jar'
+      Handler: 'com.example.topics.details.GetTopicDetailsHandler'
+      Runtime: java11
+      Description: Java function
+      FunctionName: !Sub '${ApplicationName}-topic-details'
+      MemorySize: 512
+      Timeout: 30
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+              Resource: '*'
+      Tracing: Active
+      AutoPublishAlias: live
+      Environment:
+        Variables:
+          BOOTSTRAP_SERVERS: !Ref KafkaBootstrapServers
+          DYNAMODB_SERVICE_URL_OVERRIDE: ""
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /topics/{topic}
+            Method: GET
+            RestApiId: !Ref Api
+      VpcConfig:
+        SecurityGroupIds:
+          - Fn::ImportValue: !Sub '${KakfaStackName}::BastionHostSecurityGroupId'
+        SubnetIds:
+          Fn::Split:
+            - ','
+            - Fn::ImportValue: !Sub '${NetworkingStackName}::SubnetsPrivate'
 
   DeleteTopicHandler:
     Type: AWS::Serverless::Function
@@ -129,6 +160,18 @@ Resources:
         - AWSLambda_ReadOnlyAccess
         - AWSXrayWriteOnlyAccess
         - AWSLambdaVPCAccessExecutionRole
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:*"
+              Resource: '*'
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "ec2:*"
+              Resource: '*'
       Tracing: Active
       AutoPublishAlias: live
       Environment:
@@ -142,3 +185,47 @@ Resources:
             Path: /topics/{topic}
             Method: DELETE
             RestApiId: !Ref Api
+      VpcConfig:
+        SecurityGroupIds:
+          - Fn::ImportValue: !Sub '${KakfaStackName}::BastionHostSecurityGroupId'
+        SubnetIds:
+          Fn::Split:
+            - ','
+            - Fn::ImportValue: !Sub '${NetworkingStackName}::SubnetsPrivate'
+
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+      UserPoolName: !Ref ApplicationName
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 6
+          RequireLowercase: true
+          RequireNumbers: false
+          RequireSymbols: false
+          RequireUppercase: true
+
+  CognitoUserPoolTokenClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref CognitoUserPool
+      GenerateSecret: false
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows: [ 'code', 'implicit' ]
+      CallbackURLs: [ 'http://localhost:3000', 'http://localhost:8080' ,'https://localhost', 'https://example.com/authentication' ]
+      SupportedIdentityProviders: [ 'COGNITO' ]
+      AllowedOAuthScopes: [ 'phone', 'email', 'openid' ]
+      ExplicitAuthFlows:
+        - USER_PASSWORD_AUTH
+
+  CognitoDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Join [ '-', [ !Ref ApplicationName, !Ref AWS::StackName ] ]
+      UserPoolId: !Ref CognitoUserPool

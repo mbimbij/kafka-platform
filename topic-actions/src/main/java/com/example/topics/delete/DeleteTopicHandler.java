@@ -28,8 +28,9 @@ public class DeleteTopicHandler implements RequestHandler<Map<String, Object>, G
   @SneakyThrows
   @Override
   public GatewayResponse<Void> handleRequest(Map<String, Object> request, Context context) {
-    JsonNode bodyTree = mapper.readTree((String) request.get("body"));
-    String topicName = bodyTree.get("topicName").asText();
+    JsonNode jsonNode = mapper.valueToTree(request);
+    log.info("received event {}", jsonNode.toString());
+    String topicName = jsonNode.at("/pathParameters/topic").textValue();
     topicRepository.delete(topicName);
     return GatewayResponse.createHttp200Response(null);
   }

@@ -116,6 +116,8 @@ Outputs:
     Value: !GetAtt
       - BastionHostSecurityGroup
       - GroupId
+    Export:
+      Name: !Sub '${AWS::StackName}::BastionHostSecurityGroupId'
   BastionHostPublicDnsName:
     Value: !GetAtt
       - BastionHost
@@ -123,4 +125,4 @@ Outputs:
   KakfaClusterArn:
     Value: !Ref KakfaCluster
     Export:
-      Name: !Sub '${KakfaClusterName}::ClusterArn'
+      Name: !Sub '${AWS::StackName}::ClusterArn'

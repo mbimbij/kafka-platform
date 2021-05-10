@@ -2,6 +2,7 @@ package com.example.topics.infra.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 
@@ -10,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
+@Slf4j
 public class KafkaClusterProxy {
   private final AdminClient admin;
   private final long topicCreationTimeoutMillis;
@@ -30,6 +32,7 @@ public class KafkaClusterProxy {
   }
 
   public void delete(String topicName) {
+    log.info("deleting topic: {}", topicName);
     admin.deleteTopics(Collections.singleton(topicName));
   }
 }

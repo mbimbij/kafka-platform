@@ -7,9 +7,11 @@ import com.example.topics.infra.dynamodb.TopicDaoDynamoDb;
 import com.example.topics.infra.kafka.KafkaClusterProxy;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Getter
 public class TopicRepositoryImpl implements TopicRepository {
@@ -45,6 +47,7 @@ public class TopicRepositoryImpl implements TopicRepository {
 
   @Override
   public void delete(String topicName) {
+    log.info("deleting topic: {}", topicName);
     kafkaClusterProxy.delete(topicName);
     topicDaoDynamoDb.deleteTopicInfo(topicName);
   }

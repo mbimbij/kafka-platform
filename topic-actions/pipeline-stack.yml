@@ -15,9 +15,15 @@ Parameters:
   SamStackName:
     Type: String
     Description: Name of the SAM stack
-  KakfaClusterName:
+  KakfaStackName:
+    Type: String
+    Description: Kakfa Cluster Stack Name
+  KafkaBootstrapServers:
     Type: String
     Description: Kakfa Cluster Name
+  NetworkingStackName:
+    Type: String
+    Description: Networking Stack Name
 
 Resources:
   S3Bucket:
@@ -124,6 +130,16 @@ Resources:
                   - dynamodb:*
                 Resource:
                   - '*'
+              - Effect: Allow
+                Action:
+                  - apigateway:*
+                Resource:
+                  - '*'
+              - Effect: Allow
+                Action:
+                  - logs:*
+                Resource:
+                  - '*'
       AssumeRolePolicyDocument:
         Statement:
           - Action: 'sts:AssumeRole'
@@ -131,8 +147,8 @@ Resources:
             Principal:
               Service:
                 - cloudformation.amazonaws.com
-  #      ManagedPolicyArns:
-  #        - arn:aws:iam::aws:policy/AWSCloudFormationFullAccess
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
   #        - arn:aws:iam::aws:policy/IAMFullAccess
   #        - arn:aws:iam::aws:policy/AWSLambda_FullAccess
   PipelineRole:
@@ -295,5 +311,5 @@ Resources:
                   - Arn
                 Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND,CAPABILITY_IAM
                 TemplatePath: !Sub 'BuildOutput::${ApplicationDirectoryName}/out-sam-template.yml'
-                ParameterOverrides: !Sub '{"ApplicationName":"${ApplicationName}","KafkaBootstrapServers":"${KakfaClusterName}"}'
+                ParameterOverrides: !Sub '{"ApplicationName":"${ApplicationName}", "KakfaStackName":"${KakfaStackName}", "KafkaBootstrapServers":"${KafkaBootstrapServers}", "NetworkingStackName":"${NetworkingStackName}"}'
                 StackName: !Ref SamStackName

@@ -35,8 +35,16 @@ aws cloudformation deploy    \
     SamStackName=$APPLICATION_NAME-lambda-authorizer-sam-stack
 
 echo -e  "\n##############################################################################"
+echo "creating kafka cluster"
+echo -e "##############################################################################\n"
+# create kafka cluster
+infra/kafka/create-kafka-cluster.sh
+
+echo -e  "\n##############################################################################"
 echo "creating cicd pipeline for topic CRUD actions platform"
 echo -e "##############################################################################\n"
+KAFKA_CLUSTER_ARN=$(aws cloudformation list-exports --query "Exports[?Name=='$KAFKA_STACK_NAME::ClusterArn'].Value" --output text)
+KAFKA_CLUSTER_BOOTSTRAP_SERVERS=$(aws kafka get-bootstrap-brokers --cluster-arn $KAFKA_CLUSTER_ARN --query "BootstrapBrokerString" --output text)
 # create cicd pipeline for topics crud actions
 aws cloudformation deploy    \
   --stack-name $APPLICATION_NAME-topic-actions-pipeline   \
@@ -47,22 +55,17 @@ aws cloudformation deploy    \
     ApplicationDirectoryName=topic-actions \
     GithubRepo=$GITHUB_REPO     \
     SamStackName=$APPLICATION_NAME-topic-actions-sam-stack \
-    KakfaClusterName=$KAFKA_CLUSTER_NAME
-
-#echo-e  "\n##############################################################################"
-#echo "creating kafka cluster"
-#echo -e "##############################################################################\n"
-## create kafka cluster
-#infra/kafka/create-kafka-cluster.sh
+    KakfaStackName=$KAFKA_STACK_NAME \
+    KafkaBootstrapServers=$KAFKA_CLUSTER_BOOTSTRAP_SERVERS \
+    NetworkingStackName=$NETWORKING_STACK_NAME
 
 echo -e  "\n##############################################################################"
 echo "kafka cluster, kafka topic CRUD actions platform pipeline, lambda authorizer pipeline creation done"
 echo -e "##############################################################################\n"
 
+
 #echo "##############################################################################"
 #echo "creating kafka topic 'test'"
 #echo "##############################################################################"
-#kafkaClusterArn=$(aws kafka list-clusters --query "ClusterInfoList[?ClusterName=='$KAFKA_CLUSTER_NAME'].ClusterArn" --output text)
-#kafkaClusterBootstrapBrokers=$(aws kafka get-bootstrap-brokers --cluster-arn $kafkaClusterArn --query "BootstrapBrokerString" --output text | awk -F ',' '{print $1}')
 #bastionHostPublicDnsName=$(aws cloudformation describe-stacks --stack-name $KAFKA_STACK_NAME --query "Stacks[].Outputs[?OutputKey=='BastionHostPublicDnsName'][].OutputValue" --output text)
 #ssh -o StrictHostKeyChecking=no ubuntu@$bastionHostPublicDnsName "./kafka_2.13-2.7.0/bin/kafka-topics.sh --bootstrap-server $kafkaClusterBootstrapBrokers --create --topic test --partitions 4"
