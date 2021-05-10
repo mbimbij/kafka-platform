@@ -229,3 +229,38 @@ Resources:
     Properties:
       Domain: !Join [ '-', [ !Ref ApplicationName, !Ref AWS::StackName ] ]
       UserPoolId: !Ref CognitoUserPool
+
+  DeletionAuthorizerHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: 'target/topic-actions-0.0.1-SNAPSHOT.jar'
+      Handler: 'com.example.topics.delete.lambdaauthorizer.infra.DeletionAuthorizerHandler'
+      Runtime: java11
+      Description: Java function
+      FunctionName: !Ref ApplicationName
+      MemorySize: 256
+      Timeout: 30
+      Environment:
+        Variables:
+          ACCOUNT_ID: !Ref AWS::AccountId
+      # Function's execution role
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambda_ReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "lambda:InvokeFunction"
+              Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:topic-details'
+      Tracing: Active
+      AutoPublishAlias: live
+
+Outputs:
+  ApiLiveStageUrl:
+    Description: "API live stage url"
+    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com/live/"
+    Export:
+      Name: !Sub '${AWS::StackName}::ApiLiveStageUrl'

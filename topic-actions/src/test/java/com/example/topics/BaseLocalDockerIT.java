@@ -68,20 +68,10 @@ public abstract class BaseLocalDockerIT {
     topicRepository = TopicRepositoryFactory.buildTopicRepositoryFactory();
   }
 
-  @BeforeEach
-  public void setUpBase() {
-    correlationId = UUID.randomUUID().toString();
-  }
-
   private static void setEnvVars() {
     EnvironmentVariables.setInstance(environmentVariables);
     setEnvVarIfNotDefined("BOOTSTRAP_SERVERS", "localhost:9092");
     setEnvVarIfNotDefined("TOPIC_CREATION_TIMEOUT_MILLIS", "20000");
-  }
-
-  @AfterAll
-  static void afterAllBase() {
-    log.info("afterAll BaseLocalDockerIT");
   }
 
   private static void setEnvVarIfNotDefined(String name, String valueIfAbsent) {
@@ -92,6 +82,16 @@ public abstract class BaseLocalDockerIT {
       log.info(name + " already defined");
     }
     log.info(name + "={}", EnvironmentVariables.instance().get(name));
+  }
+
+  @BeforeEach
+  public void setUpBase() {
+    correlationId = UUID.randomUUID().toString();
+  }
+
+  @AfterAll
+  static void afterAllBase() {
+    log.info("afterAll BaseLocalDockerIT");
   }
 
   protected static void setDynamoDbLocalUrl() {
