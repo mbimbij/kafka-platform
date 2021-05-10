@@ -7,10 +7,12 @@ import org.junit.jupiter.api.Test;
 class DeletionAuthorizerHandlerTest extends BaseHandlerTest {
 
   private static final String API_LIVE_STAGE_URL = "someApiLiveStageUrl";
+  protected static DeletionAuthorizerHandler deletionAuthorizerHandler;
 
   @BeforeEach
   void setUp() {
-
+    setEnvVarIfNotDefined("API_LIVE_STAGE_URL", "someApiLiveStageUrl");
+    deletionAuthorizerHandler = new DeletionAuthorizerHandler();
   }
 
   @Test

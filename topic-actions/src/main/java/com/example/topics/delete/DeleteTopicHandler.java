@@ -22,7 +22,7 @@ public class DeleteTopicHandler implements RequestHandler<Map<String, Object>, G
   private ObjectMapper mapper = new ObjectMapper();
 
   public DeleteTopicHandler() {
-    topicRepository = TopicRepositoryFactory.buildTopicRepositoryFactory();
+    topicRepository = TopicRepositoryFactory.getInstance().buildTopicRepositoryFactory();
   }
 
   @SneakyThrows

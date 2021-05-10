@@ -11,7 +11,13 @@ import software.amazon.awssdk.utils.StringUtils;
 import java.net.URI;
 
 public class TopicDaoDynamoDbFactory {
-  public static TopicDaoDynamoDb buildTopicDaoDynamoDb() {
+
+  private static TopicDaoDynamoDbFactory instance;
+
+  private TopicDaoDynamoDbFactory() {
+  }
+
+  public TopicDaoDynamoDb buildTopicDaoDynamoDb() {
     DynamoDbEnhancedClient dynamoDbEnhancedClient = createDynamoDbEnhancedClient();
     DynamoDbTable<TopicEntity> dynamoDbTable = dynamoDbEnhancedClient.table(TopicDaoDynamoDb.TABLE_NAME, TableSchema.fromBean(TopicEntity.class));
     return new TopicDaoDynamoDb(dynamoDbEnhancedClient, dynamoDbTable);
@@ -35,5 +41,16 @@ public class TopicDaoDynamoDbFactory {
         .endpointOverride(URI.create(dynamodbServiceUrlOverride))
         .region(Region.EU_WEST_3)
         .build();
+  }
+
+  public static TopicDaoDynamoDbFactory getInstance() {
+    if(instance == null){
+      instance = new TopicDaoDynamoDbFactory();
+    }
+    return instance;
+  }
+
+  public static void setInstance(TopicDaoDynamoDbFactory instance) {
+    TopicDaoDynamoDbFactory.instance = instance;
   }
 }

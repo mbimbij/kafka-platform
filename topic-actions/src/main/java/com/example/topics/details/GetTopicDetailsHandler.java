@@ -24,7 +24,7 @@ public class GetTopicDetailsHandler implements RequestHandler<Map<String, Object
   private final ObjectMapper mapper = new ObjectMapper();
 
   public GetTopicDetailsHandler() {
-    topicRepository = TopicRepositoryFactory.buildTopicRepositoryFactory();
+    topicRepository = TopicRepositoryFactory.getInstance().buildTopicRepositoryFactory();
   }
 
   @SneakyThrows

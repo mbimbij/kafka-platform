@@ -40,24 +40,36 @@ public abstract class BaseHandlerTest {
   protected static TopicRepository topicRepository;
   protected static KafkaClusterProxy kafkaClusterProxy;
   protected static TopicDaoDynamoDb topicDaoDynamoDb;
-  protected static DeletionAuthorizerHandler deletionAuthorizerHandler;
   protected EnvironmentVariables environmentVariables;
   protected final ObjectMapper mapper = new ObjectMapper().registerModule(new Jdk8Module());
 
   @BeforeEach
   public void beforeEachBase() {
-    topicRepository = mock(TopicRepository.class);
-    kafkaClusterProxy = mock(KafkaClusterProxy.class);
-    topicDaoDynamoDb = mock(TopicDaoDynamoDb.class);
     mockEnvironmentVariales();
-    try (MockedStatic<TopicRepositoryFactory> topicRepositoryFactoryMockedStatic = mockStatic(TopicRepositoryFactory.class);
-         MockedStatic<KafkaClusterProxyFactory> kafkaClusterProxyFactoryMockedStatic = mockStatic(KafkaClusterProxyFactory.class);
-         MockedStatic<TopicDaoDynamoDbFactory> topicDaoDynamoDbFactoryMockedStatic = mockStatic(TopicDaoDynamoDbFactory.class)) {
-      topicRepositoryFactoryMockedStatic.when(TopicRepositoryFactory::buildTopicRepositoryFactory).thenReturn(topicRepository);
-      kafkaClusterProxyFactoryMockedStatic.when(KafkaClusterProxyFactory::buildKafkaClusterProxy).thenReturn(kafkaClusterProxy);
-      topicDaoDynamoDbFactoryMockedStatic.when(TopicDaoDynamoDbFactory::buildTopicDaoDynamoDb).thenReturn(topicDaoDynamoDb);
-      deletionAuthorizerHandler = new DeletionAuthorizerHandler();
-    }
+    mockTopicRepositoryFactory();
+    mockKafkaClusterProxyFactory();
+    mockTopicDaoDynamoDbFactory();
+  }
+
+  private void mockTopicDaoDynamoDbFactory() {
+    topicDaoDynamoDb = mock(TopicDaoDynamoDb.class);
+    TopicDaoDynamoDbFactory topicDaoDynamoDbFactory = mock(TopicDaoDynamoDbFactory.class);
+    TopicDaoDynamoDbFactory.setInstance(topicDaoDynamoDbFactory);
+    when(topicDaoDynamoDbFactory.buildTopicDaoDynamoDb()).thenReturn(topicDaoDynamoDb);
+  }
+
+  private void mockKafkaClusterProxyFactory() {
+    kafkaClusterProxy = mock(KafkaClusterProxy.class);
+    KafkaClusterProxyFactory kafkaClusterProxyFactory = mock(KafkaClusterProxyFactory.class);
+    KafkaClusterProxyFactory.setInstance(kafkaClusterProxyFactory);
+    when(kafkaClusterProxyFactory.buildKafkaClusterProxy()).thenReturn(kafkaClusterProxy);
+  }
+
+  private void mockTopicRepositoryFactory() {
+    topicRepository = mock(TopicRepository.class);
+    TopicRepositoryFactory topicRepositoryFactory = mock(TopicRepositoryFactory.class);
+    TopicRepositoryFactory.setInstance(topicRepositoryFactory);
+    when(topicRepositoryFactory.buildTopicRepositoryFactory()).thenReturn(topicRepository);
   }
 
   private void mockEnvironmentVariales() {
@@ -65,7 +77,6 @@ public abstract class BaseHandlerTest {
     EnvironmentVariables.setInstance(environmentVariables);
     setEnvVarIfNotDefined("AWS_REGION", "eu-west-3");
     setEnvVarIfNotDefined("ACCOUNT_ID", "someAccountId");
-    setEnvVarIfNotDefined("API_LIVE_STAGE_URL", "someApiLiveStageUrl");
   }
 
   private void setEnvVars() {

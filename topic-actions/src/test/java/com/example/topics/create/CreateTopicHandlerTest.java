@@ -33,10 +33,10 @@ class CreateTopicHandlerTest {
   @BeforeEach
   void setUp() {
     topicRepository = mock(TopicRepositoryImpl.class);
-    try (MockedStatic<TopicRepositoryFactory> topicRepositoryMockedStatic = mockStatic(TopicRepositoryFactory.class)) {
-      topicRepositoryMockedStatic.when(TopicRepositoryFactory::buildTopicRepositoryFactory).thenReturn(topicRepository);
-      createTopicHandler = new CreateTopicHandler();
-    }
+    TopicRepositoryFactory topicRepositoryFactory = mock(TopicRepositoryFactory.class);
+    TopicRepositoryFactory.setInstance(topicRepositoryFactory);
+    when(topicRepositoryFactory.buildTopicRepositoryFactory()).thenReturn(topicRepository);
+    createTopicHandler = new CreateTopicHandler();
   }
 
   @SneakyThrows

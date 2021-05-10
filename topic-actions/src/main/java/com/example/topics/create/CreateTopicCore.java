@@ -32,6 +32,6 @@ public class CreateTopicCore {
   }
 
   public static CreateTopicCore createInstance() {
-    return new CreateTopicCore(TopicRepositoryFactory.buildTopicRepositoryFactory());
+    return new CreateTopicCore(TopicRepositoryFactory.getInstance().buildTopicRepositoryFactory());
   }
 }

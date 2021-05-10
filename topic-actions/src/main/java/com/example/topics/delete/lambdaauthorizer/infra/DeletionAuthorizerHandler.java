@@ -30,7 +30,7 @@ public class DeletionAuthorizerHandler implements RequestHandler<Map<String, Obj
   private final String apiGatewayStageArn = EnvironmentVariables.instance().get("API_LIVE_STAGE_URL");
 
   public DeletionAuthorizerHandler() {
-    topicRepository = TopicRepositoryFactory.buildTopicRepositoryFactory();
+    topicRepository = TopicRepositoryFactory.getInstance().buildTopicRepositoryFactory();
     authorizationDecider = new AuthorizationDecider();
     jwtUserMapper = new JwtUserMapper();
     if(StringUtils.isBlank(apiGatewayStageArn)){

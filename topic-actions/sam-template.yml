@@ -237,7 +237,7 @@ Resources:
       Handler: 'com.example.topics.delete.lambdaauthorizer.infra.DeletionAuthorizerHandler'
       Runtime: java11
       Description: Java function
-      FunctionName: !Ref ApplicationName
+      FunctionName: !Sub '${ApplicationName}-deletion-authorizer'
       MemorySize: 256
       Timeout: 30
       Environment:

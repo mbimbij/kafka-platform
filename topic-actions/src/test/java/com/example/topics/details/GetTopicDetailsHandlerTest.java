@@ -29,10 +29,10 @@ class GetTopicDetailsHandlerTest {
   @BeforeEach
   void setUp() {
     topicRepository = mock(TopicRepository.class);
-    try (MockedStatic<TopicRepositoryFactory> mocked = mockStatic(TopicRepositoryFactory.class)) {
-      mocked.when(TopicRepositoryFactory::buildTopicRepositoryFactory).thenReturn(topicRepository);
-      getTopicDetailsHandler = new GetTopicDetailsHandler();
-    }
+    TopicRepositoryFactory topicRepositoryFactory = mock(TopicRepositoryFactory.class);
+    TopicRepositoryFactory.setInstance(topicRepositoryFactory);
+    when(topicRepositoryFactory.buildTopicRepositoryFactory()).thenReturn(topicRepository);
+    getTopicDetailsHandler = new GetTopicDetailsHandler();
   }
 
   @SneakyThrows

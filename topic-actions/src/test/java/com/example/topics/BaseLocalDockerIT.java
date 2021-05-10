@@ -63,9 +63,9 @@ public abstract class BaseLocalDockerIT {
     setDynamoDbLocalUrl();
     initDynamoDbLocalClient();
     createTopicInfoTableIfNotExists();
-    topicDaoDynamoDb = TopicDaoDynamoDbFactory.buildTopicDaoDynamoDb();
-    kafkaClusterProxy = KafkaClusterProxyFactory.buildKafkaClusterProxy();
-    topicRepository = TopicRepositoryFactory.buildTopicRepositoryFactory();
+    topicDaoDynamoDb = TopicDaoDynamoDbFactory.getInstance().buildTopicDaoDynamoDb();
+    kafkaClusterProxy = KafkaClusterProxyFactory.getInstance().buildKafkaClusterProxy();
+    topicRepository = TopicRepositoryFactory.getInstance().buildTopicRepositoryFactory();
   }
 
   private static void setEnvVars() {

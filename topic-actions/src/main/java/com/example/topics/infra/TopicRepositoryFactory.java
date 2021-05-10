@@ -8,8 +8,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TopicRepositoryFactory {
 
-  public static TopicRepository buildTopicRepositoryFactory() {
-    return new TopicRepositoryImpl(KafkaClusterProxyFactory.buildKafkaClusterProxy(), TopicDaoDynamoDbFactory.buildTopicDaoDynamoDb());
+  private static TopicRepositoryFactory instance;
+
+  private TopicRepositoryFactory() {
   }
 
+  public TopicRepository buildTopicRepositoryFactory() {
+    return new TopicRepositoryImpl(KafkaClusterProxyFactory.getInstance().buildKafkaClusterProxy(), TopicDaoDynamoDbFactory.getInstance().buildTopicDaoDynamoDb());
+  }
+
+  public static TopicRepositoryFactory getInstance() {
+    if(instance == null){
+      instance = new TopicRepositoryFactory();
+    }
+    return instance;
+  }
+
+  public static void setInstance(TopicRepositoryFactory instance) {
+    TopicRepositoryFactory.instance = instance;
+  }
 }
