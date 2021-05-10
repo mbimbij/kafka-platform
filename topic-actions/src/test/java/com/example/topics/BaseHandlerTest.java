@@ -2,35 +2,18 @@ package com.example.topics;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.example.topics.core.TopicRepository;
-import com.example.topics.delete.lambdaauthorizer.infra.DeletionAuthorizerHandler;
-import com.example.topics.details.GetTopicDetailsHandler;
 import com.example.topics.infra.EnvironmentVariables;
 import com.example.topics.infra.TopicRepositoryFactory;
 import com.example.topics.infra.dynamodb.TopicDaoDynamoDb;
 import com.example.topics.infra.dynamodb.TopicDaoDynamoDbFactory;
-import com.example.topics.infra.dynamodb.TopicEntity;
 import com.example.topics.infra.kafka.KafkaClusterProxy;
 import com.example.topics.infra.kafka.KafkaClusterProxyFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.MockedStatic;
-import org.testcontainers.containers.DockerComposeContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.ResourceInUseException;
 
-import java.io.File;
-import java.net.URI;
-import java.time.Duration;
 import java.util.Objects;
-import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 

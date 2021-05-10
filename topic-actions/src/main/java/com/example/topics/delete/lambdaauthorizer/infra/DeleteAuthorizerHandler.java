@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-public class DeletionAuthorizerHandler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
+public class DeleteAuthorizerHandler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
 
   private ObjectMapper mapper = new ObjectMapper();
   private JwtUserMapper jwtUserMapper;
@@ -29,7 +29,7 @@ public class DeletionAuthorizerHandler implements RequestHandler<Map<String, Obj
   private String accountId = EnvironmentVariables.instance().get("ACCOUNT_ID");
   private final String apiGatewayStageArn = EnvironmentVariables.instance().get("API_LIVE_STAGE_URL");
 
-  public DeletionAuthorizerHandler() {
+  public DeleteAuthorizerHandler() {
     topicRepository = TopicRepositoryFactory.getInstance().buildTopicRepositoryFactory();
     authorizationDecider = new AuthorizationDecider();
     jwtUserMapper = new JwtUserMapper();
@@ -44,15 +44,10 @@ public class DeletionAuthorizerHandler implements RequestHandler<Map<String, Obj
   @SneakyThrows
   @Override
   public Map<String, Object> handleRequest(Map<String, Object> request, Context context) {
-    log.info("current region: {}", currentRegion.toString());
-    log.info("request: {}", mapper.writeValueAsString(request));
-    log.info("context: {}", context.toString());
     JsonNode requestJsonNode = mapper.valueToTree(request);
     String authorizationToken = getAuthorizationToken(requestJsonNode);
-    log.info("authToken: {}", authorizationToken);
 
     String topicName = requestJsonNode.at("/pathParameters/topic").asText();
-    log.info("topicName: {}", topicName);
     User user = jwtUserMapper.getUserFromJwt(authorizationToken);
 
     // if topic does not exist, the deletion method still can be called, but will return http404

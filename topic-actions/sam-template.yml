@@ -230,14 +230,14 @@ Resources:
       Domain: !Join [ '-', [ !Ref ApplicationName, !Ref AWS::StackName ] ]
       UserPoolId: !Ref CognitoUserPool
 
-  DeletionAuthorizerHandler:
+  DeleteAuthorizerHandler:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: 'target/topic-actions-0.0.1-SNAPSHOT.jar'
-      Handler: 'com.example.topics.delete.lambdaauthorizer.infra.DeletionAuthorizerHandler'
+      Handler: 'com.example.topics.delete.lambdaauthorizer.infra.DeleteAuthorizerHandler'
       Runtime: java11
       Description: Java function
-      FunctionName: !Sub '${ApplicationName}-deletion-authorizer'
+      FunctionName: !Sub '${ApplicationName}-delete-authorizer'
       MemorySize: 256
       Timeout: 30
       Environment:

@@ -28,7 +28,6 @@ public class DeleteTopicHandlerLocalDockerIT extends BaseLocalDockerIT {
       softAssertions.assertThat(kafkaClusterProxy.topicExistsInKafkaCluster(correlationId)).isTrue();
       softAssertions.assertThat(topicDaoDynamoDb.getTopicInfo(correlationId)).isNotEmpty();
     });
-//    Map<String, Object> body = Map.of("pathParameters",Map.of("topic", correlationId));
     String requestString = FileUtils.readFileToString(new File("src/test/resources/deleteTopic.json"), StandardCharsets.UTF_8);
     JsonNode requestTree = mapper.readTree(requestString);
     ((ObjectNode) requestTree.at("/pathParameters")).put("topic", correlationId);

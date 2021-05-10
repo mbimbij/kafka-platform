@@ -2,7 +2,7 @@ package com.example.topics;
 
 import com.example.topics.create.CreateTopicHandler;
 import com.example.topics.delete.DeleteTopicHandler;
-import com.example.topics.delete.lambdaauthorizer.infra.DeletionAuthorizerHandler;
+import com.example.topics.delete.lambdaauthorizer.infra.DeleteAuthorizerHandler;
 import com.example.topics.details.GetTopicDetailsHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -90,19 +90,19 @@ public class SamTemplateIT {
   }
 
   @Nested
-  public class DeletionAuthorizerHandlerSamTest {
+  public class DeleteAuthorizerHandlerSamTest {
     @SneakyThrows
     @Test
     void verifyCodeUri() {
-      String handlerName = DeletionAuthorizerHandler.class.getSimpleName();
+      String handlerName = DeleteAuthorizerHandler.class.getSimpleName();
       verifyCodeUriBase(handlerName);
     }
 
     @SneakyThrows
     @Test
     void verifyHandler() {
-      String expectedHandlerFullName = DeletionAuthorizerHandler.class.getName();
-      String handlerName = DeletionAuthorizerHandler.class.getSimpleName();
+      String expectedHandlerFullName = DeleteAuthorizerHandler.class.getName();
+      String handlerName = DeleteAuthorizerHandler.class.getSimpleName();
       verifyHandlerBase(expectedHandlerFullName, handlerName);
     }
   }
