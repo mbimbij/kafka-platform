@@ -52,7 +52,15 @@ Resources:
         AllowOrigin: "'*'"
         AllowMethods: "'OPTIONS,HEAD,GET,PUT,POST,DELETE'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-
+      Auth:
+        Authorizers:
+          LambdaDeleteAuthorizer:
+            FunctionArn:
+              Fn::GetAtt:
+                - DeleteAuthorizerHandler
+                - Arn
+            Identity:
+              ReauthorizeEvery: 0
   ApiAccessLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
