@@ -118,8 +118,10 @@ Resources:
                 Action:
                   - iam:*
                 Resource:
-                  - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${SamStackName}*'
-                  - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ApplicationName}*'
+#                  - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${SamStackName}*'
+#                  - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ApplicationName}*'
+#                  - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${ApplicationName}/*'
+                  - '*'
               - Effect: Allow
                 Action:
                   - lambda:*

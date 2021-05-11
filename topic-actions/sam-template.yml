@@ -6,10 +6,6 @@ Parameters:
   ApplicationName:
     Type: String
     Description: Application Name
-  ApplicationVersion:
-    Default: '0.0.1-SNAPSHOT'
-    Type: String
-    Description: Application Version
   KakfaStackName:
     Type: String
     Description: Kakfa Cluster Stack Name
@@ -46,7 +42,7 @@ Resources:
       Format: '$context.identity.sourceIp $context.authorizer.claims.sub [$context.requestTime] "$context.httpMethod $context.resourcePath $context.protocol" $context.status $context.requestId $context.awsEndpointRequestId $context.xrayTraceId $context.responseLatency $context.integrationLatency "$context.error.message"'
     Properties:
       Name: KafkaPlatformCrudApi
-      StageName: live
+      StageName: Live
       TracingEnabled: true
       Cors:
         AllowOrigin: "'*'"
@@ -59,8 +55,11 @@ Resources:
               Fn::GetAtt:
                 - DeleteAuthorizerHandler
                 - Arn
+            FunctionPayloadType: REQUEST
             Identity:
               ReauthorizeEvery: 0
+              Headers:
+                - Authorization
   ApiAccessLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -187,6 +186,7 @@ Resources:
             Path: /topics/{topic}
             Method: DELETE
             RestApiId: !Ref Api
+            Auth:
       VpcConfig:
         SecurityGroupIds:
           - Fn::ImportValue: !Sub '${KakfaStackName}::BastionHostSecurityGroupId'
@@ -207,11 +207,11 @@ Resources:
         - email
       Policies:
         PasswordPolicy:
-          MinimumLength: 6
+          MinimumLength: 4
           RequireLowercase: true
           RequireNumbers: false
           RequireSymbols: false
-          RequireUppercase: true
+          RequireUppercase: false
 
   CognitoUserPoolTokenClient:
     Type: AWS::Cognito::UserPoolClient
@@ -247,6 +247,7 @@ Resources:
           ACCOUNT_ID: !Ref AWS::AccountId
           BOOTSTRAP_SERVERS: !Ref KafkaBootstrapServers
           DYNAMODB_SERVICE_URL_OVERRIDE: ""
+          API_LIVE_STAGE_ARN: "*"
       # Function's execution role
       Policies:
         - AWSLambdaBasicExecutionRole
@@ -268,10 +269,3 @@ Resources:
           Fn::Split:
             - ','
             - Fn::ImportValue: !Sub '${NetworkingStackName}::SubnetsPrivate'
-
-Outputs:
-  ApiLiveStageUrl:
-    Description: "API live stage url"
-    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com/live/"
-    Export:
-      Name: !Sub '${AWS::StackName}::ApiLiveStageUrl'

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 class DeleteAuthorizerHandlerTest extends BaseHandlerTest {
 
-  private static final String API_LIVE_STAGE_URL = "someApiLiveStageUrl";
+  private static final String API_LIVE_STAGE_ARN = "someApiLiveStageArn";
   protected static DeleteAuthorizerHandler deleteAuthorizerHandler;
   private String TOPIC_NAME = "testTopicName";
   private Group topicOwnerGroup;
@@ -32,7 +32,7 @@ class DeleteAuthorizerHandlerTest extends BaseHandlerTest {
   @SneakyThrows
   @BeforeEach
   void setUp() {
-    setEnvVarIfNotDefined("API_LIVE_STAGE_URL", API_LIVE_STAGE_URL);
+    setEnvVarIfNotDefined("API_LIVE_STAGE_ARN", API_LIVE_STAGE_ARN);
     deleteAuthorizerHandler = new DeleteAuthorizerHandler();
     topicOwnerGroup = new Group("dev");
     topic = Topic.builder().name(TOPIC_NAME).ownerGroup(topicOwnerGroup).build();

@@ -25,25 +25,17 @@ public class DeleteAuthorizerHandler implements RequestHandler<Map<String, Objec
   private JwtUserMapper jwtUserMapper;
   private AuthorizationDecider authorizationDecider;
   private TopicRepository topicRepository;
-  private Region currentRegion = Region.of(EnvironmentVariables.instance().get("AWS_REGION"));
-  private String accountId = EnvironmentVariables.instance().get("ACCOUNT_ID");
-  private final String apiGatewayStageArn = EnvironmentVariables.instance().get("API_LIVE_STAGE_URL");
 
   public DeleteAuthorizerHandler() {
     topicRepository = TopicRepositoryFactory.getInstance().buildTopicRepositoryFactory();
     authorizationDecider = new AuthorizationDecider();
     jwtUserMapper = new JwtUserMapper();
-    if(StringUtils.isBlank(apiGatewayStageArn)){
-      throw new IllegalStateException("\"API_LIVE_STAGE_URL\" environment variable is undefined");
-    }
-    if(StringUtils.isBlank(accountId)){
-      throw new IllegalStateException("\"ACCOUNT_ID\" environment variable is undefined");
-    }
   }
 
   @SneakyThrows
   @Override
   public Map<String, Object> handleRequest(Map<String, Object> request, Context context) {
+    log.info(mapper.writeValueAsString(request));
     JsonNode requestJsonNode = mapper.valueToTree(request);
     String authorizationToken = getAuthorizationToken(requestJsonNode);
 
@@ -56,7 +48,8 @@ public class DeleteAuthorizerHandler implements RequestHandler<Map<String, Objec
         .orElse(true);
     String authorizationResponse = isAuthorized ? "Allow" : "Deny";
 
-    String response = "{\"principalId\":\"abc123\",\"policyDocument\":{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":\"execute-api:Invoke\",\"Resource\":[\"" + apiGatewayStageArn + "\"],\"Effect\":\"" + authorizationResponse + "\"}]}}";
+    String methodArn = requestJsonNode.get("methodArn").asText();
+    String response = "{\"principalId\":\"abc123\",\"policyDocument\":{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":\"execute-api:Invoke\",\"Resource\":[\"" + methodArn + "\"],\"Effect\":\"" + authorizationResponse + "\"}]}}";
     return mapper.readValue(response, new TypeReference<HashMap<String, Object>>() {
     });
   }

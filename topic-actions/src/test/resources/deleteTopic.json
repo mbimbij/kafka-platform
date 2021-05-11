@@ -1,4 +1,5 @@
 {
+  "methodArn": "someMethodArn",
   "pathParameters": {
     "topic": "someTopic"
   },
