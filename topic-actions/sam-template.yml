@@ -174,12 +174,6 @@ Resources:
               Action:
                 - "dynamodb:*"
               Resource: '*'
-        - Version: "2012-10-17"
-          Statement:
-            - Effect: "Allow"
-              Action:
-                - "ec2:*"
-              Resource: '*'
       Tracing: Active
       AutoPublishAlias: live
       Environment:
@@ -246,11 +240,13 @@ Resources:
       Runtime: java11
       Description: Java function
       FunctionName: !Sub '${ApplicationName}-delete-authorizer'
-      MemorySize: 256
+      MemorySize: 512
       Timeout: 30
       Environment:
         Variables:
           ACCOUNT_ID: !Ref AWS::AccountId
+          BOOTSTRAP_SERVERS: !Ref KafkaBootstrapServers
+          DYNAMODB_SERVICE_URL_OVERRIDE: ""
       # Function's execution role
       Policies:
         - AWSLambdaBasicExecutionRole
@@ -261,10 +257,17 @@ Resources:
           Statement:
             - Effect: "Allow"
               Action:
-                - "lambda:InvokeFunction"
-              Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:topic-details'
+                - "dynamodb:*"
+              Resource: '*'
       Tracing: Active
       AutoPublishAlias: live
+      VpcConfig:
+        SecurityGroupIds:
+          - Fn::ImportValue: !Sub '${KakfaStackName}::BastionHostSecurityGroupId'
+        SubnetIds:
+          Fn::Split:
+            - ','
+            - Fn::ImportValue: !Sub '${NetworkingStackName}::SubnetsPrivate'
 
 Outputs:
   ApiLiveStageUrl:

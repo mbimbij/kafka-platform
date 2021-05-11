@@ -140,6 +140,11 @@ Resources:
                   - logs:*
                 Resource:
                   - '*'
+              - Effect: Allow
+                Action:
+                  - ec2:*
+                Resource:
+                  - '*'
       AssumeRolePolicyDocument:
         Statement:
           - Action: 'sts:AssumeRole'
