@@ -187,6 +187,7 @@ Resources:
             Method: DELETE
             RestApiId: !Ref Api
             Auth:
+              Authorizer: LambdaDeleteAuthorizer
       VpcConfig:
         SecurityGroupIds:
           - Fn::ImportValue: !Sub '${KakfaStackName}::BastionHostSecurityGroupId'
@@ -207,7 +208,7 @@ Resources:
         - email
       Policies:
         PasswordPolicy:
-          MinimumLength: 4
+          MinimumLength: 6
           RequireLowercase: true
           RequireNumbers: false
           RequireSymbols: false
