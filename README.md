@@ -20,6 +20,13 @@ similaire que j'ai eu l'occasion d'utiliser dans un contexte professionnel.
 
 D'autres mini-projets persos sur cette thématique à venir.
 
+Reste à faire: 
+
+- vérification du JWT
+- une UI
+- maj README
+- un article de blog rapide
+
 ## zookeeper cluster vs zookeeper client - mutual TLS
 
 Générer un keystore / truststore pour le cluster zookeeper avec le script `create-jks.sh`
